@@ -7,7 +7,7 @@ def initialize_models(db: SQLAlchemy):
     db.drop_all()
     db.session.commit()
 
-    class User(db.Model):
+    class AppUser(db.Model):
         id = db.Column(db.Integer, primary_key=True)
         username = db.Column(db.String(80), unique=True, nullable=False)
         email = db.Column(db.String(120), unique=True, nullable=False)
@@ -18,23 +18,23 @@ def initialize_models(db: SQLAlchemy):
 
     class Project(db.Model):
         id = db.Column(db.Integer, primary_key=True)
-        owner = db.Column(db.ForeignKey('user.id'))
+        owner = db.Column(db.ForeignKey('app_user.id'))
 
         def __repr__(self):
             return '<Project %r>' % self.username
 
     class File(db.Model):
         id = db.Column(db.Integer, primary_key=True)
-        owner = db.Column(db.ForeignKey('user.id'))
+        owner = db.Column(db.ForeignKey('app_user.id'))
         containing_project = db.Column(db.ForeignKey('project.id'))
         data = db.Column(db.LargeBinary)
 
 
     db.create_all()
     
-    if (not User.query.filter_by(username="admin").first()):
+    if (not AppUser.query.filter_by(username="admin").first()):
 
-        admin_user = User(username='admin', email='admin@/dev/null', password=generate_password_hash('root'))
+        admin_user = AppUser(username='admin', email='admin@/dev/null', password=generate_password_hash('root'))
         db.session.add(admin_user)
     db.session.commit()
-    return (User, Project, File)
+    return (AppUser, Project, File)

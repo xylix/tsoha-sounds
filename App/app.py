@@ -14,7 +14,7 @@ app.config["SQLALCHEMY_DATABASE_URI"] = REWRITTEN_DATABASE_URL
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.secret_key = getenv("SECRET_KEY")
 db = SQLAlchemy(app)
-User, Project, File = models.initialize_models(db)
+AppUser, Project, File = models.initialize_models(db)
 
 print(db.engine.table_names())
 
@@ -51,7 +51,7 @@ def login():
     password = request.form["password"]
     print(f"Querying for user with username: {username}")
     # Check username and password
-    user = User.query.filter_by(username=username).first()
+    user = AppUser.query.filter_by(username=username).first()
     if not user:
         print(f"User not found, result of query: {user}")
         return render_template("invalid_credentials.html")
