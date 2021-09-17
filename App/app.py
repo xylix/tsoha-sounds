@@ -4,6 +4,7 @@ from flask import Flask
 from flask import render_template, request, redirect, session
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import check_password_hash, generate_password_hash
+from sqlalchemy.schema import CreateTable
 
 from . import models
 
@@ -17,6 +18,7 @@ db = SQLAlchemy(app)
 AppUser, Project, File = models.initialize_models(db)
 
 print(db.engine.table_names())
+print([print(CreateTable(item.__table__)) for item in [AppUser, Project, File]])
 
 # TODO: implement selecting active project
 current_project = "first_test_project"
