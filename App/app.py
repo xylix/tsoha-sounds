@@ -4,6 +4,7 @@ from os import getenv
 from flask import Flask
 from flask import render_template, request, redirect, session
 from flask_sqlalchemy import SQLAlchemy
+from werkzeug.exceptions import abort
 from werkzeug.security import check_password_hash, generate_password_hash
 from sqlalchemy.schema import CreateTable
 
@@ -20,9 +21,6 @@ AppUser, Project, File = models.initialize_models(db)
 
 print(db.engine.table_names())
 print([print(CreateTable(item.__table__)) for item in [AppUser, Project, File]])
-
-# TODO: implement selecting active project
-current_project = "first_test_project"
 
 
 def is_logged_in_user():
@@ -48,18 +46,12 @@ def auth_required(f):
 
 @app.route("/")
 def index():
-    if is_admin:
+    if is_admin():
         result = db.session.execute("SELECT name,id FROM project")
     else:
-        result = db.session.execute("SELECT name,id FROM project WHERE published=True")
+        result = db.session.execute("SELECT name,id FROM project WHERE published=True OR owner=:id", {"id": session["user_id"]})
     projects = result.fetchall()
     return render_template("index.html", count=len(projects), projects=projects) 
-
-
-@app.route("/projects")
-def projects():
-    # TODO: Fetch the projects from DB and give as parameter to render_template
-    return render_template("projects.html")
 
 
 @app.route("/project/<int:id>")
@@ -77,17 +69,22 @@ def project(id: int):
 @app.route("/add_file")
 @auth_required
 def add_file():
-    sql = "SELECT id, name FROM project WHERE owner=:username"
-    result = db.session.execute(sql, {"username":session["username"]})
+    sql = "SELECT id, name FROM project WHERE owner=:user_id"
+    result = db.session.execute(sql, {"user_id":session["user_id"]})
     available_projects = result.fetchall()
-    return render_template("new_file", available_projects=available_projects)
+    return render_template("new_file.html", available_projects=available_projects)
 
 
 @app.route("/send_file", methods=["POST"])
 def send_file():
     content = request.form["file"]
-    new_file = File(owner=session["username"], containing_project=current_project, data=content )
-    db.session.add(new_file)
+    project = request.form["project"]
+    result = db.session.execute(
+        "INSERT INTO file(owner,containing_project,data) VALUES (:owner, :containing_project, :data)", 
+        {"owner":session["username"], "containing_project":project, "data":content}
+    )
+    db.session.commit()
+
     return redirect("/")
 
 
@@ -97,10 +94,20 @@ def add_project():
     return render_template("new_project.html")
 
 
-
 @app.route("/send_project", methods=["POST"])
 def send_project():
-    pass
+    name = request.form["name"]
+    try:
+        sql = "INSERT INTO project(name, owner) VALUES (:name, :owner)"
+        result = db.session.execute(sql, {"name":name, "owner": session["user_id"]})
+        db.session.commit()
+        print(f"Succesfully created project {name}")
+        return redirect("/")
+    except BaseException as e:
+        print(e)
+        # FIXME: this could be any db error
+        return render_template("error.html", error="Please select an unique name for your projct")
+
 
 @app.route("/login",methods=["POST"])
 def login():
@@ -122,7 +129,8 @@ def login():
             return render_template("invalid_credentials.html")
 
     session["username"] = username
-    session["is_admin"] = user["is_admin"]
+    session["user_id"] = user.id
+    session["is_admin"] = user["is_admin"] == True
     return redirect("/")
 
 
@@ -138,7 +146,17 @@ def register():
 
 @app.route("/send_register", methods=["POST"])
 def send_register():
-    return
+    username = request.form["username"]
+    email = request.form["email"]
+    password = generate_password_hash(request.form["password"])
+    try:
+        sql = "INSERT INTO app_user(username, password,email) VALUES (:username, :password, :email)"
+        result = db.session.execute(sql, {"username":username, "password": password, "email": email})
+        db.session.commit()
+        return redirect("/")
+    except BaseException as e:
+        print(e)
+        return render_template("error.html", error="Please select an unique username")
 
 if __name__ == "__main__":
     app.run()

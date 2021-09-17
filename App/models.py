@@ -12,7 +12,7 @@ def initialize_models(db: SQLAlchemy):
         username = db.Column(db.String(80), unique=True, nullable=False)
         email = db.Column(db.String(120), unique=True, nullable=False)
         password = db.Column(db.String(1024), unique=True, nullable=False)
-        is_admin = db.Column(db.Boolean, nullable=False)
+        is_admin = db.Column(db.Boolean, default=False)
 
         def __repr__(self):
             return '<User %r>' % self.username
@@ -21,7 +21,7 @@ def initialize_models(db: SQLAlchemy):
         id = db.Column(db.Integer, primary_key=True)
         owner = db.Column(db.ForeignKey('app_user.id'))
         name = db.Column(db.String(80), unique=True)
-        published = db.Column(db.Boolean)
+        published = db.Column(db.Boolean, default=False)
 
         def __repr__(self):
             return '<Project %r>' % self.username
@@ -35,7 +35,7 @@ def initialize_models(db: SQLAlchemy):
     db.create_all()
 
     if AppUser.query.filter_by(username="admin").first() is None:
-        admin_user = AppUser(username='admin', email='admin@/dev/null', password=generate_password_hash('root'), is_admin=False)
+        admin_user = AppUser(username='admin', email='admin@/dev/null', password=generate_password_hash('root'), is_admin=True)
         sample_project = Project(owner=admin_user.id, name="first_test_project")
         db.session.add(admin_user)
         db.session.add(sample_project)

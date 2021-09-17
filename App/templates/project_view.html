@@ -1,8 +1,17 @@
-<h3> Lisää projektiin tiedosto </h3>
-tähän tulee linkki
+<h3> Projekti {{ name }} </h3>
 
+<br></br>
 
 Projektin nykyiset tiedostot:
+<br></br>
 {% for file in current_files %}
-	tiedosto {{file.id}}, sisältö: {{file.data}}
+	* tiedosto {{file.id}}, sisältö: {{file.data}}
+	<br></br>
 {% endfor %}
+
+<br></br>
+
+<a href="/add_file">Lisää tiedosto</a>
+
+<br></br>
+<a href="/">Palaa takaisin</a>
