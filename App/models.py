@@ -23,7 +23,7 @@ def initialize_models(db: SQLAlchemy):
         id = db.Column(db.Integer, primary_key=True)
         owner = db.Column(db.ForeignKey('user.id'))
         containing_project = db.Column(db.ForeignKey('project.id'))
-        data = db.Column(db.BINARY)
+        data = db.Column(db.LargeBinary)
 
 
     db.create_all()
