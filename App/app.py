@@ -9,7 +9,8 @@ from . import models
 
 app = Flask(__name__)
 
-app.config["SQLALCHEMY_DATABASE_URI"] = getenv("DATABASE_URL")
+REWRITTEN_DATABASE_URL = getenv("DATABASE_URL").replace('postgres://', 'postgresql://')
+app.config["SQLALCHEMY_DATABASE_URI"] = REWRITTEN_DATABASE_URL
 # Lets use sqlite for development
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.secret_key = getenv("SECRET_KEY")
