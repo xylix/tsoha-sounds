@@ -11,7 +11,6 @@ app = Flask(__name__)
 
 REWRITTEN_DATABASE_URL = getenv("DATABASE_URL").replace('postgres://', 'postgresql://')
 app.config["SQLALCHEMY_DATABASE_URI"] = REWRITTEN_DATABASE_URL
-# Lets use sqlite for development
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.secret_key = getenv("SECRET_KEY")
 db = SQLAlchemy(app)
@@ -74,3 +73,5 @@ def logout():
     del session["username"]
     return redirect("/")
 
+if __name__ == "__main__":
+    app.run()
