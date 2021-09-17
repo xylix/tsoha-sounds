@@ -5,19 +5,21 @@ from flask import render_template, request, redirect, session
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from models import initialize_models
+from . import models
 
 app = Flask(__name__)
 
-# app.config["SQLALCHEMY_DATABASE_URI"] = getenv("DATABASE_URL")
+app.config["SQLALCHEMY_DATABASE_URI"] = getenv("DATABASE_URL")
 # Lets use sqlite for development
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/test.db'
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.secret_key = getenv("SECRET_KEY")
 db = SQLAlchemy(app)
-User, Project, File = initialize_models(db)
+User, Project, File = models.initialize_models(db)
 
 print(db.engine.table_names())
+
+# TODO: implement selecting active project
+current_project = "first_test_project"
 
 @app.route("/")
 def index():
@@ -38,7 +40,7 @@ def new():
 @app.route("/send", methods=["POST"])
 def send():
     content = request.form["file"]
-    new_file = File(owner=session.username, containing_project=current_project, data=content )
+    new_file = File(owner=session["username"], containing_project=current_project, data=content )
     db.session.add(new_file)
     return redirect("/")
 
