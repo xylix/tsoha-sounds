@@ -5,6 +5,7 @@ from werkzeug.security import generate_password_hash
 def initialize_models(db: SQLAlchemy):
     # TODO: In future either stop changing database and remove this or implement proper migrations
     db.drop_all()
+    db.session.commit()
 
     class User(db.Model):
         id = db.Column(db.Integer, primary_key=True)
