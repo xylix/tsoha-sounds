@@ -12,6 +12,7 @@ def initialize_models(db: SQLAlchemy):
         username = db.Column(db.String(80), unique=True, nullable=False)
         email = db.Column(db.String(120), unique=True, nullable=False)
         password = db.Column(db.String(1024), unique=True, nullable=False)
+        is_admin = db.Column(db.Boolean, nullable=False)
 
         def __repr__(self):
             return '<User %r>' % self.username
@@ -33,7 +34,7 @@ def initialize_models(db: SQLAlchemy):
     db.create_all()
 
     if AppUser.query.filter_by(username="admin").first() is None:
-       admin_user = AppUser(username='admin', email='admin@/dev/null', password=generate_password_hash('root'))
+       admin_user = AppUser(username='admin', email='admin@/dev/null', password=generate_password_hash('root'), is_admin=False)
        db.session.add(admin_user)
        db.session.commit()
     

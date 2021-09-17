@@ -25,13 +25,20 @@ print([print(CreateTable(item.__table__)) for item in [AppUser, Project, File]])
 current_project = "first_test_project"
 
 
+def is_logged_in_user():
+    return session["username"] is not None
+
+def is_admin():
+    return session["is_admin"] == True
+
+
 def auth_required(f):
     @wraps(f)
     def decorated_function(*args, **kws):
         allow = False
         if is_admin():
             allow = True
-        elif session["username"]:
+        elif is_logged_in_user():
             allow = True
         if not allow:
             return render_template("error.html", error="Ei oikeutta nähdä sivua")
@@ -55,10 +62,13 @@ def projects():
 @app.route("/project/<int:id>")
 @auth_required
 def project(id: int):
+    sql = "SELECT id, name FROM project WHERE id=:id"
+    result = db.session.execute(sql, {"id": id})
+    name = result.fetchone().name
     sql = "SELECT id, data FROM file WHERE containing_project=:id"
     result = db.session.execute(sql, {"id": id})
     files = result.fetchall()
-    return render_template("project_view.html", current_files=files)
+    return render_template("project_view.html", name=name, current_files=files)
 
 
 @app.route("/add_file")
@@ -95,7 +105,7 @@ def login():
     password = request.form["password"]
     print(f"Querying for user with username: {username}")
     # Check username and password
-    sql = "SELECT id, password FROM app_user WHERE username=:username"
+    sql = "SELECT id, password, is_admin FROM app_user WHERE username=:username"
     result = db.session.execute(sql, {"username":username})
     user = result.fetchone()
     if not user:
@@ -109,6 +119,7 @@ def login():
             return render_template("invalid_credentials.html")
 
     session["username"] = username
+    session["is_admin"] = user["is_admin"]
     return redirect("/")
 
 
