@@ -48,9 +48,12 @@ def auth_required(f):
 
 @app.route("/")
 def index():
-    result = db.session.execute("SELECT username FROM app_user")
-    messages = result.fetchall()
-    return render_template("index.html", count=len(messages), messages=messages) 
+    if is_admin:
+        result = db.session.execute("SELECT name,id FROM project")
+    else:
+        result = db.session.execute("SELECT name,id FROM project WHERE published=True")
+    projects = result.fetchall()
+    return render_template("index.html", count=len(projects), projects=projects) 
 
 
 @app.route("/projects")
@@ -128,6 +131,14 @@ def login():
 def logout():
     del session["username"]
     return redirect("/")
+
+@app.route("/register")
+def register():
+    return render_template("register.html")
+
+@app.route("/send_register", methods=["POST"])
+def send_register():
+    return
 
 if __name__ == "__main__":
     app.run()

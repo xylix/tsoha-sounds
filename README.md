@@ -2,23 +2,27 @@
 
 ### Aihe:
 
-Musiikki-ohjelmointi ympäristö
+Äänien-talletus selainpalvelu
 
 Ominaisuuksia:
-    Käyttäjä voi kirjautua sisään ja ulos sekä luoda uuden tunnuksen.
+	[ ] Käyttäjä voi kirjautua sisään ja ulos sekä luoda uuden tunnuksen.
 	
-	Käyttäjä voi luoda omia projekteja
-	Käyttäjä voi lisätä palvelimelle oman äänitiedoston tai sarjan äänitiedostoja
-	Käyttäjä voi tallentaa muokatun projektin
+	[ ] Käyttäjä voi luoda omia projekteja
+	[ ] Käyttäjä voi lisätä projektiin tiedostoja
+	[ ] Käyttäjä voi lisätä omien projektiensa tiedostoja helposti muihin projekteihin
 	
-	Käyttäjä voi julkaista omia projekteja. Käyttäjä voi perua julkaisun / piilottaa jo julkaistun projektin.
+	[ ] Käyttäjä voi julkaista omia projekteja. Käyttäjä voi perua julkaisun / piilottaa jo julkaistun projektin.
 
-	Käyttäjä voi selata julkaistuja projekteja
-	Käyttäjä voi etsiä projekteja nimen alimerkkijonon perusteella
-	Käyttäjä voi soittaa projektin äänitiedoston tai äänitiedostot peräkkäin
-	Käyttäjä voi kommentoida / arvostella muiden projekteja?
+	[x]  Käyttäjä voi selata julkaistuja projekteja
+	[ ] Käyttäjä voi etsiä projekteja nimen alimerkkijonon perusteella
+	[ ] Käyttäjä voi soittaa projektin äänitiedoston tai äänitiedostot peräkkäin
+	[ ] Käyttäjä voi kommentoida / arvostella muiden projekteja?
 
-	Ylläpitäjä voi tehdä kaikkia käyttäjille sallittuja muokkauksia kaikkian käyttäjien projekteihin. Ylläpitäjä voi piilottaa ja poistaa julkaistuja projekteja.
+	[ ] Ylläpitäjä voi tehdä kaikkia käyttäjille sallittuja muokkauksia kaikkian käyttäjien projekteihin. Ylläpitäjä voi piilottaa ja poistaa julkaistuja projekteja.
+
+Mahdollisesti pakollisia?:
+	[ ] Käyttäjä voi muokata projektia
+	[ ] Käyttäjä voi tallentaa muokatun projektin
 
 
 Mahdollisia jatko-ominaisuuksia:

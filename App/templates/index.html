@@ -1,15 +1,15 @@
 
 {% if session.username %}
-Tietokantarivien määrä: {{ count }}
+Selattavien projektien määrä: {{ count }}
 <hr>
-{% for message in messages %}
-{{ message.content }}
+{% for project in projects %}
+<a href="/project/{{project.id}}"> {{ project.name }} </a>
 <hr>
 {% endfor %}
-<a href="/add_dile">Lähetä viesti</a>
+<a href="/add_file">Lähetä viesti</a>
 <a href="/add_project">Luo projekti</a>
 
-<p>Olet kirjautunut nimellä {{ session.username }}</p>
+<p>Olet kirjautunut nimellä "{{ session.username }}"</p>
 <a href="/logout">Kirjaudu ulos</a>
 {% else %}
 <form action="/login" method="POST">
@@ -19,5 +19,6 @@ Tietokantarivien määrä: {{ count }}
 <input type="password" name="password"></p>
 <input type="submit" value="Kirjaudu">
 </form>
+<a href="/register">Luo uusi käyttäjä</a>
 {% endif %}
 
