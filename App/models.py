@@ -32,9 +32,11 @@ def initialize_models(db: SQLAlchemy):
 
     db.create_all()
     
-    if (not AppUser.query.filter_by(username="admin").first()):
-
-        admin_user = AppUser(username='admin', email='admin@/dev/null', password=generate_password_hash('root'))
-        db.session.add(admin_user)
+    try:
+        if AppUser.query.filter_by(username="admin").first() is not None:
+            admin_user = AppUser(username='admin', email='admin@/dev/null', password=generate_password_hash('root'))
+            db.session.add(admin_user)
+    except Exception as e:
+        print(e)
     db.session.commit()
     return (AppUser, Project, File)
