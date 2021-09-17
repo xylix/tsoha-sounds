@@ -25,7 +25,7 @@ current_project = "first_test_project"
 
 @app.route("/")
 def index():
-    result = db.session.execute("SELECT username FROM user")
+    result = db.session.execute("SELECT username FROM app_user")
     messages = result.fetchall()
     return render_template("index.html", count=len(messages), messages=messages) 
 
