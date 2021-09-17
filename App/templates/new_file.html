@@ -1,0 +1,17 @@
+<h3> Lisää projektiin tiedosto </h1>
+<form action="/send_file" method="POST">
+Tiedosto: <input type="file" name="file">
+Projekti: 
+{% if available_projects %}
+	<select name="project">
+	{% for item in available_projects %}
+		<option value={{ item.id }} >{{ item.name }} </option>
+	{% endfor %}
+	</select>
+{% else %}
+	Ei projekteja saatavilla
+{% endif %}
+<br>
+<input type="submit" value="Lähetä">
+</form>
+

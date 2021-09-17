@@ -1,3 +1,4 @@
+from functools import wraps
 from os import getenv
 
 from flask import Flask
@@ -23,29 +24,70 @@ print([print(CreateTable(item.__table__)) for item in [AppUser, Project, File]])
 # TODO: implement selecting active project
 current_project = "first_test_project"
 
+
+def auth_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kws):
+        allow = False
+        if is_admin():
+            allow = True
+        elif session["username"]:
+            allow = True
+        if not allow:
+            return render_template("error.html", error="Ei oikeutta nähdä sivua")
+        return f(*args, **kws)
+    return decorated_function
+
+
 @app.route("/")
 def index():
     result = db.session.execute("SELECT username FROM app_user")
     messages = result.fetchall()
     return render_template("index.html", count=len(messages), messages=messages) 
 
+
 @app.route("/projects")
 def projects():
-    pass
+    # TODO: Fetch the projects from DB and give as parameter to render_template
+    return render_template("projects.html")
 
 
-@app.route("/new")
-def new():
-    return render_template("new.html")
+@app.route("/project/<int:id>")
+@auth_required
+def project(id: int):
+    sql = "SELECT id, data FROM file WHERE containing_project=:id"
+    result = db.session.execute(sql, {"id": id})
+    files = result.fetchall()
+    return render_template("project_view.html", current_files=files)
 
 
-@app.route("/send", methods=["POST"])
-def send():
+@app.route("/add_file")
+@auth_required
+def add_file():
+    sql = "SELECT id, name FROM project WHERE owner=:username"
+    result = db.session.execute(sql, {"username":session["username"]})
+    available_projects = result.fetchall()
+    return render_template("new_file", available_projects=available_projects)
+
+
+@app.route("/send_file", methods=["POST"])
+def send_file():
     content = request.form["file"]
     new_file = File(owner=session["username"], containing_project=current_project, data=content )
     db.session.add(new_file)
     return redirect("/")
 
+
+@app.route("/add_project")
+@auth_required
+def add_project():
+    return render_template("new_project.html")
+
+
+
+@app.route("/send_project", methods=["POST"])
+def send_project():
+    pass
 
 @app.route("/login",methods=["POST"])
 def login():
@@ -53,12 +95,13 @@ def login():
     password = request.form["password"]
     print(f"Querying for user with username: {username}")
     # Check username and password
-    user = AppUser.query.filter_by(username=username).first()
+    sql = "SELECT id, password FROM app_user WHERE username=:username"
+    result = db.session.execute(sql, {"username":username})
+    user = result.fetchone()
     if not user:
         print(f"User not found, result of query: {user}")
         return render_template("invalid_credentials.html")
     else:
-        print(user.password)
         hash_value = user.password
         if check_password_hash(hash_value, password):
             pass
