@@ -11,8 +11,12 @@ Projektin nykyiset tiedostot:
 <br></br>
 
 <form action="/project/{{project_id}}/send_publish" method="POST">
-<input type="checkbox" name="published" value="selected" checked={{ published }}>Julkaisustatus<br>
-<input type="submit" value="Lähetä">
+{% if published %}
+<input type="checkbox" name="published" value="selected" checked={{published}}>Julkaistu<br>
+{% else %}
+<input type="checkbox" name="published" value="selected">Julkaistu<br>
+{% endif %}
+<input type="submit" value="Päivitä">
 </form>
 
 <br></br>
