@@ -1,11 +1,17 @@
 
 {% if session.username %}
-Selattavien projektien määrä: {{ count }}
+Omat projektisi:
 <hr>
-{% for project in projects %}
+{% for project in own_projects %}
 <a href="/project/{{project.id}}"> {{ project.name }} </a>
 <hr>
 {% endfor %}
+Muiden julkaistut projektit:
+{% for project in public_projects %}
+<a href="/project/{{project.id}}"> {{ project.name }} </a>
+<hr>
+{% endfor %}
+<hr>
 <a href="/add_file">Lähetä viesti</a>
 <a href="/add_project">Luo projekti</a>
 

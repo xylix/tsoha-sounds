@@ -49,21 +49,33 @@ def index():
     if is_admin():
         result = db.session.execute("SELECT name,id FROM project")
     else:
-        result = db.session.execute("SELECT name,id FROM project WHERE published=True OR owner=:id", {"id": session["user_id"]})
-    projects = result.fetchall()
-    return render_template("index.html", count=len(projects), projects=projects) 
+        result = db.session.execute("SELECT name,id FROM project WHERE published=True" )
+    public_projects = result.fetchall()
+    own_projects = db.session.execute("SELECT name,id FROM project WHERE owner=:id", {"id": session["user_id"]}).fetchall()
+    return render_template("index.html", own_projects=own_projects, public_projects=public_projects) 
 
 
 @app.route("/project/<int:id>")
 @auth_required
 def project(id: int):
-    sql = "SELECT id, name FROM project WHERE id=:id"
+    sql = "SELECT id, name, published FROM project WHERE id=:id"
     result = db.session.execute(sql, {"id": id})
-    name = result.fetchone().name
+    project_info = result.fetchone()
     sql = "SELECT id, data FROM file WHERE containing_project=:id"
     result = db.session.execute(sql, {"id": id})
     files = result.fetchall()
-    return render_template("project_view.html", name=name, current_files=files)
+    return render_template("project_view.html", name=project_info.name, project_id=project_info.id, current_files=files, published=project_info.published)
+
+
+@app.route("/project/<int:id>/send_publish", methods=["POST"])
+def send_publish(id: int):
+    published = request.form.get("published") == "selected"
+
+    sql = "UPDATE project SET published=:published WHERE id=:id"
+    result = db.session.execute(sql, {"id": id, "published": published})
+    db.session.commit()
+    print(f"Updated published status for project {id}, new value of publish: {published}")
+    return redirect(f"/project/{id}")
 
 
 @app.route("/add_file")

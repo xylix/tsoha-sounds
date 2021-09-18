@@ -5,8 +5,6 @@ from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash
 
 def initialize_models(db: SQLAlchemy):
-    db.drop_all()
-    db.session.commit()
     class AppUser(db.Model):
         id = db.Column(db.Integer, primary_key=True)
         username = db.Column(db.String(80), unique=True, nullable=False)
@@ -36,7 +34,7 @@ def initialize_models(db: SQLAlchemy):
 
     if AppUser.query.filter_by(username="admin").first() is None:
         admin_user = AppUser(username='admin', email='admin@/dev/null', password=generate_password_hash('root'), is_admin=True)
-        sample_project = Project(owner=admin_user.id, name="first_test_project")
+        sample_project = Project(owner=admin_user.id, name="First public project", published=True)
         db.session.add(admin_user)
         db.session.add(sample_project)
         db.session.commit()

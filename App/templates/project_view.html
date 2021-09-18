@@ -1,13 +1,19 @@
 <h3> Projekti {{ name }} </h3>
 
 <br></br>
-
+<hr></hr>
 Projektin nykyiset tiedostot:
 <br></br>
 {% for file in current_files %}
 	* tiedosto {{file.id}}, sisältö: {{file.data}}
 	<br></br>
 {% endfor %}
+<br></br>
+
+<form action="/project/{{project_id}}/send_publish" method="POST">
+<input type="checkbox" name="published" value="selected" checked={{ published }}>Julkaisustatus<br>
+<input type="submit" value="Lähetä">
+</form>
 
 <br></br>
 
