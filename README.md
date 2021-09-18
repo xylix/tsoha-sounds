@@ -11,17 +11,17 @@ Ominaisuuksia:
 	[x] Käyttäjä voi lisätä projektiin tiedostoja
 	[ ] Käyttäjä voi lisätä omien projektiensa tiedostoja helposti muihin projekteihin
 	
-	[ ] Käyttäjä voi julkaista omia projekteja. Käyttäjä voi perua julkaisun / piilottaa jo julkaistun projektin.
+	[x] Käyttäjä voi julkaista omia projekteja. Käyttäjä voi perua julkaisun / piilottaa jo julkaistun projektin.
 
-	[x]  Käyttäjä voi selata julkaistuja projekteja
+	[x] Käyttäjä voi selata julkaistuja projekteja
 	[ ] Käyttäjä voi etsiä projekteja nimen alimerkkijonon perusteella
-	[ ] Käyttäjä voi soittaa projektin äänitiedoston tai äänitiedostot peräkkäin
 	[ ] Käyttäjä voi kommentoida / arvostella muiden projekteja?
 
 	[ ] Ylläpitäjä voi tehdä kaikkia käyttäjille sallittuja muokkauksia kaikkian käyttäjien projekteihin. Ylläpitäjä voi piilottaa ja poistaa julkaistuja projekteja.
 	[ ] Lisää auth_required loppuihin endpointteihin joissa tarpeen
 
 Mahdollisesti pakollisia?:
+	[ ] Käyttäjä voi soittaa projektin äänitiedoston tai äänitiedostot peräkkäin
 	[ ] Käyttäjä voi muokata projektia
 	[ ] Käyttäjä voi tallentaa muokatun projektin
 

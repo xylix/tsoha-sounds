@@ -29,6 +29,7 @@ def initialize_models(db: SQLAlchemy):
         owner = db.Column(db.ForeignKey('app_user.id'))
         containing_project = db.Column(db.ForeignKey('project.id'))
         data = db.Column(db.LargeBinary)
+        name = db.Column(db.String(80))
     
     db.create_all()
 

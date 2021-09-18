@@ -78,24 +78,34 @@ def send_publish(id: int):
     return redirect(f"/project/{id}")
 
 
-@app.route("/add_file")
+@app.route("/add_file/<int:id>")
 @auth_required
-def add_file():
+def add_file(id: int):
     sql = "SELECT id, name FROM project WHERE owner=:user_id"
-    result = db.session.execute(sql, {"user_id":session["user_id"]})
+    user_id = session["user_id"]
+    result = db.session.execute(sql, {"user_id":user_id})
     available_projects = result.fetchall()
-    return render_template("new_file.html", available_projects=available_projects)
+    available_files = db.session.execute("SELECT id,name FROM file WHERE (owner = :user_id AND NOT containing_project = :project_id)", {"project_id": id, "user_id":user_id}).fetchall()
+    return render_template("new_file.html", available_projects=available_projects, available_files=available_files)
 
 
 @app.route("/send_file", methods=["POST"])
 def send_file():
-    content = request.form["file"]
+    new_file = request.form["new_file"]
+    old_file = request.form.get("old_file")
     project = request.form["project"]
-    result = db.session.execute(
-        "INSERT INTO file(owner,containing_project,data) VALUES (:owner, :containing_project, :data)", 
-        {"owner":session["username"], "containing_project":project, "data":content}
-    )
-    db.session.commit()
+    name = request.form.get("name")
+
+    if old_file:
+        # Add entry to many to many table to mark file belonging to this project as well
+        # https://docs.sqlalchemy.org/en/14/orm/basic_relationships.html#many-to-many
+        pass
+    elif new_file:
+        result = db.session.execute(
+            "INSERT INTO file(owner,containing_project,data,name) VALUES (:owner, :containing_project, :data, :name)", 
+            {"owner":session["user_id"], "containing_project":project, "data":new_file, "name": name}
+        )
+        db.session.commit()
 
     return redirect("/")
 
