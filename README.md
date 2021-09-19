@@ -9,14 +9,14 @@ Ominaisuuksia:
 	
 	[x] Käyttäjä voi luoda omia projekteja
 	[x] Käyttäjä voi lisätä projektiin tiedostoja
-	[ ] Käyttäjä voi lisätä omien projektiensa tiedostoja helposti muihin projekteihin
+	[x] Käyttäjä voi lisätä omien projektiensa tiedostoja helposti muihin projekteihin
 	
 	[x] Käyttäjä voi julkaista omia projekteja. Käyttäjä voi perua julkaisun / piilottaa jo julkaistun projektin.
 
 	[x] Käyttäjä voi selata julkaistuja projekteja
-	[ ] Käyttäjä voi etsiä projekteja nimen alimerkkijonon perusteella
-	[ ] Käyttäjä voi kommentoida / arvostella muiden projekteja?
+	[x] Käyttäjä voi kommentoida / arvostella muiden projekteja
 
+	[ ] Käyttäjä voi etsiä projekteja nimen alimerkkijonon perusteella
 	[ ] Ylläpitäjä voi tehdä kaikkia käyttäjille sallittuja muokkauksia kaikkian käyttäjien projekteihin. Ylläpitäjä voi piilottaa ja poistaa julkaistuja projekteja.
 	[ ] Lisää auth_required loppuihin endpointteihin joissa tarpeen
 

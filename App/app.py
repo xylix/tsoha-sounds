@@ -17,10 +17,11 @@ app.config["SQLALCHEMY_DATABASE_URI"] = REWRITTEN_DATABASE_URL
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.secret_key = getenv("SECRET_KEY")
 db = SQLAlchemy(app)
-AppUser, Project, File = models.initialize_models(db)
+models = models.initialize_models(db)
+AppUser, Project, File, Comment = models
 
 print(db.engine.table_names())
-print([print(CreateTable(item.__table__)) for item in [AppUser, Project, File]])
+print([print(CreateTable(item.__table__)) for item in models])
 
 
 def is_logged_in_user():
@@ -61,10 +62,15 @@ def project(id: int):
     sql = "SELECT id, name, published FROM project WHERE id=:id"
     result = db.session.execute(sql, {"id": id})
     project_info = result.fetchone()
+    
     sql = "SELECT id, data FROM file WHERE containing_project=:id"
     result = db.session.execute(sql, {"id": id})
     files = result.fetchall()
-    return render_template("project_view.html", name=project_info.name, project_id=project_info.id, current_files=files, published=project_info.published)
+    
+    sql = "SELECT sender, content FROM comment WHERE containing_project=:id"
+    result = db.session.execute(sql, {"id": id})
+    comments = result.fetchall()
+    return render_template("project_view.html", name=project_info.name, project_id=project_info.id, current_files=files, published=project_info.published, comments=comments)
 
 
 @app.route("/project/<int:id>/send_publish", methods=["POST"])
@@ -97,6 +103,7 @@ def send_file():
     name = request.form.get("name")
 
     if old_file:
+        # FIXME: implement linking file to multiple projects here
         # Add entry to many to many table to mark file belonging to this project as well
         # https://docs.sqlalchemy.org/en/14/orm/basic_relationships.html#many-to-many
         pass
@@ -129,6 +136,12 @@ def send_project():
         print(e)
         # FIXME: this could be any db error
         return render_template("error.html", error="Please select an unique name for your projct")
+
+
+@app.route("/project/<int:id>/send_comment", methods=["POST"])
+def send_comment():
+    
+    return redirect(f"/project/{id}")
 
 
 @app.route("/login",methods=["POST"])

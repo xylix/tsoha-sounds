@@ -1,5 +1,7 @@
 <h3> Projekti {{ name }} </h3>
 
+{% if is_owner %}
+
 <br></br>
 <hr></hr>
 Projektin nykyiset tiedostot:
@@ -23,5 +25,27 @@ Projektin nykyiset tiedostot:
 
 <a href="/add_file/{{project_id}}">Lisää tiedosto</a>
 
+{% else %}
+
+Jätä palautetta:
+
+<form action="/project/{{project_id}}/send_comment" method="POST">
+<input type="text" name="comment">
+<input type="submit" value="Lähetä">
+</form>
+
+{% endif %}
+
+<a href="ei_toimi_vielä"/>Suorita projekti (soita äänitiedostot)</a>
+
 <br></br>
+
+Kommentit:
+ <ul>
+{% for item in comments %}
+	<li> {{item.sender}}: {{item.content}} </li>
+	<br></br>
+{% endfor %}
+ </ul>
+
 <a href="/">Palaa takaisin</a>

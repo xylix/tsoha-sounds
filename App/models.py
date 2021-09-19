@@ -1,4 +1,4 @@
-from sqlalchemy import inspect
+from sqlalchemy import func
 
 from flask_sqlalchemy import SQLAlchemy
 
@@ -30,14 +30,25 @@ def initialize_models(db: SQLAlchemy):
         containing_project = db.Column(db.ForeignKey('project.id'))
         data = db.Column(db.LargeBinary)
         name = db.Column(db.String(80))
+
+    class Comment(db.Model):
+        id = db.Column(db.Integer, primary_key=True)
+        sender = db.Column(db.ForeignKey('app_user.id'))
+        containing_project = db.Column(db.ForeignKey('project.id'))
+        content = db.Column(db.String(1024), nullable=False)
+        sent = db.Column(db.DateTime(timezone=True), server_default=func.now(), nullable=False)
     
     db.create_all()
 
     if AppUser.query.filter_by(username="admin").first() is None:
         admin_user = AppUser(username='admin', email='admin@/dev/null', password=generate_password_hash('root'), is_admin=True)
-        sample_project = Project(owner=admin_user.id, name="First public project", published=True)
         db.session.add(admin_user)
+        db.session.commit()
+        sample_project = Project(owner=admin_user.id, name="First public project", published=True)
         db.session.add(sample_project)
         db.session.commit()
+        sample_comment = Comment(sender=admin_user.id, containing_project=sample_project.id, content="First test comment")
+        db.session.add(sample_comment)
+        db.session.commit()
     
-    return (AppUser, Project, File)
+    return (AppUser, Project, File, Comment)
