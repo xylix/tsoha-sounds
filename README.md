@@ -20,6 +20,9 @@ Ominaisuuksia:
 	[ ] Ylläpitäjä voi tehdä kaikkia käyttäjille sallittuja muokkauksia kaikkian käyttäjien projekteihin. Ylläpitäjä voi piilottaa ja poistaa julkaistuja projekteja.
 	[ ] Lisää auth_required loppuihin endpointteihin joissa tarpeen
 
+	#### pakollisia korjauksia:
+	[ ] SQLALchemy modelit ja queryt normaaliksi SQL
+
 Mahdollisesti pakollisia?:
 	[ ] Käyttäjä voi soittaa projektin äänitiedoston tai äänitiedostot peräkkäin
 	[ ] Käyttäjä voi muokata projektia

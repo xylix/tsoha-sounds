@@ -1,9 +1,11 @@
 from functools import wraps
 from os import getenv
+from typing import Optional
 
 from flask import Flask
 from flask import render_template, request, redirect, session
 from flask_sqlalchemy import SQLAlchemy
+from werkzeug.datastructures import FileStorage
 from werkzeug.exceptions import abort
 from werkzeug.security import check_password_hash, generate_password_hash
 from sqlalchemy.schema import CreateTable
@@ -19,9 +21,6 @@ app.secret_key = getenv("SECRET_KEY")
 db = SQLAlchemy(app)
 models = models.initialize_models(db)
 AppUser, Project, File, Comment = models
-
-print(db.engine.table_names())
-print([print(CreateTable(item.__table__)) for item in models])
 
 
 def is_logged_in_user():
@@ -59,18 +58,22 @@ def index():
 @app.route("/project/<int:id>")
 @auth_required
 def project(id: int):
-    sql = "SELECT id, name, published FROM project WHERE id=:id"
+    sql = "SELECT id, name, owner, published FROM project WHERE id=:id"
     result = db.session.execute(sql, {"id": id})
     project_info = result.fetchone()
     
-    sql = "SELECT id, data FROM file WHERE containing_project=:id"
-    result = db.session.execute(sql, {"id": id})
-    files = result.fetchall()
+    project_obj = Project.query.filter_by(id=id).first()
+    files = File.query.with_parent(project_obj).all()
+
+
+    # sql = "SELECT id, data FROM file WHERE containing_project=:id"
+    # result = db.session.execute(sql, {"id": id})
+    #files = result.fetchall()
     
     sql = "SELECT sender, content FROM comment WHERE containing_project=:id"
     result = db.session.execute(sql, {"id": id})
     comments = result.fetchall()
-    return render_template("project_view.html", name=project_info.name, project_id=project_info.id, current_files=files, published=project_info.published, comments=comments)
+    return render_template("project_view.html", name=project_info.name, project_id=project_info.id, current_files=files, published=project_info.published, comments=comments, is_owner=project_info.owner==session['user_id'])
 
 
 @app.route("/project/<int:id>/send_publish", methods=["POST"])
@@ -83,7 +86,7 @@ def send_publish(id: int):
     print(f"Updated published status for project {id}, new value of publish: {published}")
     return redirect(f"/project/{id}")
 
-
+# Does this benefit from ID since it offers change to add file to any project?
 @app.route("/add_file/<int:id>")
 @auth_required
 def add_file(id: int):
@@ -91,30 +94,37 @@ def add_file(id: int):
     user_id = session["user_id"]
     result = db.session.execute(sql, {"user_id":user_id})
     available_projects = result.fetchall()
-    available_files = db.session.execute("SELECT id,name FROM file WHERE (owner = :user_id AND NOT containing_project = :project_id)", {"project_id": id, "user_id":user_id}).fetchall()
+    # FIXME: how to do query.without_parent behaviour? (filter away already parented files of the proejct)
+    available_files = File.query.filter_by(owner=user_id).all()
+    # available_files = db.session.execute("SELECT id,name FROM file WHERE (owner = :user_id AND NOT containing_project = :project_id)", {"project_id": id, "user_id":user_id}).fetchall()
     return render_template("new_file.html", available_projects=available_projects, available_files=available_files)
 
 
 @app.route("/send_file", methods=["POST"])
 def send_file():
-    new_file = request.form["new_file"]
+    new_file: Optional[FileStorage] = request.files.get("new_file")
     old_file = request.form.get("old_file")
     project = request.form["project"]
-    name = request.form.get("name")
+    project_obj = Project.query.filter_by(id=project).first()
+
+    print(request.files)
+    if new_file:
+        print("Uploading new file")
+        assert new_file
+        file = File(owner=session["user_id"], data=new_file.stream.read(), name=new_file.filename)
+        project_obj.files.append(file)
+        db.session.add(project_obj)
+        db.session.commit()
+        return redirect(f"/project/{project_obj.id}")
 
     if old_file:
-        # FIXME: implement linking file to multiple projects here
-        # Add entry to many to many table to mark file belonging to this project as well
-        # https://docs.sqlalchemy.org/en/14/orm/basic_relationships.html#many-to-many
-        pass
-    elif new_file:
-        result = db.session.execute(
-            "INSERT INTO file(owner,containing_project,data,name) VALUES (:owner, :containing_project, :data, :name)", 
-            {"owner":session["user_id"], "containing_project":project, "data":new_file, "name": name}
-        )
+        print("Appending existing file")
+        file = File.query.filter_by(id=old_file).first()
+        project_obj.files.append(file)
+        db.session.add(project_obj)
         db.session.commit()
-
-    return redirect("/")
+        return redirect(f"/project/{project_obj.id}")
+    return abort(500)
 
 
 @app.route("/add_project")

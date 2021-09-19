@@ -1,42 +1,48 @@
-from sqlalchemy import func
-
+from sqlalchemy import Column, Integer, ForeignKey, func, DateTime, String, Boolean, LargeBinary
+from sqlalchemy.schema import CreateTable
 from flask_sqlalchemy import SQLAlchemy
-
 from werkzeug.security import generate_password_hash
 
+
 def initialize_models(db: SQLAlchemy):
+    file_project_association_table = db.Table('association', db.metadata,
+        Column('project_id', ForeignKey('project.id'), primary_key=True),
+        Column('file_id', ForeignKey('file.id'), primary_key=True)
+    )
+
     class AppUser(db.Model):
-        id = db.Column(db.Integer, primary_key=True)
-        username = db.Column(db.String(80), unique=True, nullable=False)
-        email = db.Column(db.String(120), unique=True, nullable=False)
-        password = db.Column(db.String(1024), unique=True, nullable=False)
-        is_admin = db.Column(db.Boolean, default=False)
+        id = Column(Integer, primary_key=True)
+        username = Column(String(80), unique=True, nullable=False)
+        email = Column(String(120), unique=True, nullable=False)
+        password = Column(String(1024), unique=True, nullable=False)
+        is_admin = Column(Boolean, default=False)
 
         def __repr__(self):
             return '<User %r>' % self.username
 
     class Project(db.Model):
-        id = db.Column(db.Integer, primary_key=True)
-        owner = db.Column(db.ForeignKey('app_user.id'))
-        name = db.Column(db.String(80), unique=True)
-        published = db.Column(db.Boolean, default=False)
+        id = Column(Integer, primary_key=True)
+        owner = Column(ForeignKey('app_user.id'))
+        name = Column(String(80), unique=True)
+        published = Column(Boolean, default=False)
+        files = db.relationship("File", secondary=file_project_association_table)
+
 
         def __repr__(self):
             return '<Project %r>' % self.username
 
     class File(db.Model):
-        id = db.Column(db.Integer, primary_key=True)
-        owner = db.Column(db.ForeignKey('app_user.id'))
-        containing_project = db.Column(db.ForeignKey('project.id'))
-        data = db.Column(db.LargeBinary)
-        name = db.Column(db.String(80))
+        id = Column(Integer, primary_key=True)
+        owner = Column(ForeignKey('app_user.id'))
+        data = Column(LargeBinary)
+        name = Column(String(80))
 
     class Comment(db.Model):
-        id = db.Column(db.Integer, primary_key=True)
-        sender = db.Column(db.ForeignKey('app_user.id'))
-        containing_project = db.Column(db.ForeignKey('project.id'))
-        content = db.Column(db.String(1024), nullable=False)
-        sent = db.Column(db.DateTime(timezone=True), server_default=func.now(), nullable=False)
+        id = Column(Integer, primary_key=True)
+        sender = Column(ForeignKey('app_user.id'))
+        containing_project = Column(ForeignKey('project.id'))
+        content = Column(String(1024), nullable=False)
+        sent = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
     
     db.create_all()
 
@@ -45,10 +51,16 @@ def initialize_models(db: SQLAlchemy):
         db.session.add(admin_user)
         db.session.commit()
         sample_project = Project(owner=admin_user.id, name="First public project", published=True)
+        sample_file = File(owner=admin_user.id, name="Test file")
+        sample_project.files.append(sample_file)
         db.session.add(sample_project)
         db.session.commit()
         sample_comment = Comment(sender=admin_user.id, containing_project=sample_project.id, content="First test comment")
         db.session.add(sample_comment)
         db.session.commit()
     
-    return (AppUser, Project, File, Comment)
+    print(db.engine.table_names())
+    models = AppUser, Project, File, Comment
+    print(CreateTable(file_project_association_table))
+    [print(CreateTable(item.__table__)) for item in models]
+    return models
