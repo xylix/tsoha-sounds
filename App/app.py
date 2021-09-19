@@ -149,8 +149,11 @@ def send_project():
 
 
 @app.route("/project/<int:id>/send_comment", methods=["POST"])
-def send_comment():
-    
+def send_comment(id: int):
+    content = request.form["comment"]
+    sample_comment = Comment(sender=session["user_id"], containing_project=id, content=content)
+    db.session.add(sample_comment)
+    db.session.commit()
     return redirect(f"/project/{id}")
 
 
