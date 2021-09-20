@@ -6,7 +6,6 @@ from flask_sqlalchemy import SQLAlchemy
 
 from . import models
 from .helpers import is_admin, logged_in_user
-from .routes import file, project, user
 
 app = Flask(__name__)
 
@@ -17,6 +16,9 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.secret_key = getenv("SECRET_KEY")
 db = SQLAlchemy(app)
 models.initialize_models(db)
+
+# This needs to be _after_ the `app` and db are defined to avoid circular import problems
+from .routes import file, project, user
 
 
 @app.route("/")
