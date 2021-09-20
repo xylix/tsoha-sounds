@@ -1,3 +1,3 @@
-from . import file, project, user
+from . import audio, file, project, user
 
-__all__ = ["file", "project", "user"]
+__all__ = ["audio", "file", "project", "user"]

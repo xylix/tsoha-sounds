@@ -41,7 +41,7 @@ def initialize_models(database: SQLAlchemy):
         __tablename__ = "files"
         id = Column(Integer, primary_key=True)
         owner = Column(ForeignKey("appusers.id"))
-        data = Column(LargeBinary)
+        data = Column(LargeBinary, nullable=False)
         name = Column(String(80))
 
     class Comment(database.Model):
@@ -68,7 +68,9 @@ def initialize_models(database: SQLAlchemy):
         sample_project = Project(
             owner=admin_user.id, name="First public project", published=True
         )
-        sample_file = File(owner=admin_user.id, name="Test file")
+        sample_file = File(
+            owner=admin_user.id, name="Broken test file", data=b"1010101010"
+        )
         sample_project.files.append(sample_file)
         database.session.add(sample_project)
         database.session.commit()

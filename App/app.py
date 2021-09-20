@@ -19,7 +19,7 @@ models.initialize_models(db)
 
 # fmt: off
 # This needs to be _after_ the `app` and db are defined to avoid circular import problems
-from .routes import file, project, user # pylint: disable=wrong-import-position,unused-import
+from .routes import file, project, user, audio # pylint: disable=wrong-import-position,unused-import
 # fmt: on
 
 

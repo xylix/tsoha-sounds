@@ -1,4 +1,5 @@
 from typing import Optional
+from pathlib import Path
 
 from flask import render_template, session, request, redirect
 from werkzeug.exceptions import abort
@@ -37,6 +38,11 @@ def send_file():
     if new_file:
         print("Uploading new file")
         assert new_file
+        assert new_file.filename
+        if not Path(new_file.filename).suffix == ".mp3":
+            return render_template(
+                "error.html", error="The application only supports .mp3 files"
+            )
 
         files_insert_sql = "INSERT INTO Files(owner, data, name) VALUES (:owner, :data, :name) RETURNING id"
         files_result = db.session.execute(
