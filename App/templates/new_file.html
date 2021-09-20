@@ -1,3 +1,7 @@
+{% extends "layout.html" %}
+{% block body %}
+
+
 <h3> Lisää projektiin tiedosto </h1>
 <form action="/send_file" method="POST" enctype=multipart/form-data>
 <hr></hr>
@@ -27,3 +31,4 @@ Projekti johon tiedosto lisätään:
 <input type="submit" value="Lähetä">
 </form>
 
+{% endblock %}

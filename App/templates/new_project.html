@@ -1,5 +1,9 @@
+{% extends "layout.html" %}
+{% block body %}
+
 <form action="/send_project" method="POST">
 <p>Nimi:<br>
 <input type="text" name="name"></p>
 <input type="submit" value="Luo">
 </form>
+{% endblock %}

@@ -20,6 +20,7 @@ Mahdollisesti pakollisia?:
 		* https://stackoverflow.com/questions/64501684/how-can-i-play-playing-a-mp3-sound-with-flask
 	[ ] Käyttäjä voi muokata projektia
 	[ ] Käyttäjä voi tallentaa muokatun projektin
+	[ ] Joku tapa poistaa jotain (projekteja, tiedostoja, kommentteja)
 
 
 Mahdollisia jatko-ominaisuuksia:

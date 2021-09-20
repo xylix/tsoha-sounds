@@ -1,4 +1,6 @@
-<link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+{% extends "layout.html" %}
+{% block body %}
+
 {% if session.username %}
 Omat projektisi:
 <hr>
@@ -32,4 +34,4 @@ Hae projektia:<input type="text" name="query"><input type="submit" value="Lähet
 </form>
 <a href="/register">Luo uusi käyttäjä</a>
 {% endif %}
-
+{% endblock %}
