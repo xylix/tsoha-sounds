@@ -13,6 +13,7 @@ Toteutettavia ominaisuuksia:
 	[ ] Tarkista että projekti täyttää https://hy-tsoha.github.io/materiaali/tekninen_tarkastuslista/ vaatimukset
 		* Tarkista myös https://hy-tsoha.github.io/materiaali/arvostelu/
 
+		[ ] validoi user inputit ennen sql inserttejä
 	[ ] Heroku deployment
 
 

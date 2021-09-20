@@ -15,7 +15,7 @@ app.config["SQLALCHEMY_DATABASE_URI"] = REWRITTEN_DATABASE_URL
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.secret_key = getenv("SECRET_KEY")
 db = SQLAlchemy(app)
-models = models.initialize_models(db)
+models.initialize_models(db)
 
 
 @app.route("/")
