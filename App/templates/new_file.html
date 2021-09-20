@@ -9,9 +9,10 @@ Uusi tiedosto: <input type="file" name="new_file">
 <hr></hr>
 Olemassaoleva tiedosto: {% if available_files %}
 	<select name="old_file">
-	{% for item in available_files %}
+		<option disabled selected value >Valitse olemassaoleva tiedosto</option>
+		{% for item in available_files %}
 		<option value={{ item.id }} >{{ item.name }} </option>
-	{% endfor %}
+		{% endfor %}
 	</select>
 {% else %}
 	Ei tiedostoja saatavilla

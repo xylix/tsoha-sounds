@@ -4,7 +4,11 @@
 
 Äänien-talletus selainpalvelu
 
-Toteutettavia ominaisuuksia:
+### Käyttö-ohje
+
+TODO: selitä täällä miten sovellusta käytetään
+
+### Toteutettavia ominaisuuksia:
 	#### pakollisia korjauksia:
 
 	[ ] Ylläpitäjä voi tehdä kaikkia käyttäjille sallittuja muokkauksia kaikkian käyttäjien projekteihin. Ylläpitäjä voi piilottaa ja poistaa julkaistuja projekteja.
@@ -15,18 +19,15 @@ Toteutettavia ominaisuuksia:
 		[ ] validoi user inputit ennen sql inserttejä
 		[ ] README:hen käyttöohje
 		[ ] Ulkoasun tulee olla _viimeistelty_
+	# ennen viimeistä deploymenttiä
 	[ ] poista models.py, mutta populoi tietokantaan jotain "valmista dataa"
 	[ ] Heroku deployment
 
-
-Mahdollisesti pakollisia?:
-	[ ] Joku tapa poistaa jotain (projekteja, tiedostoja, kommentteja)
-Tiedettyjä bugeja:
+#### Tiedettyjä bugeja:
 	[ ] Tiedostoja ei siivota kun ne on poistettu kaikista viittaavista projekteista
 	[ ] index.html sivulla näkyy "palaa takaisin" näkymä vaikka käyttäjä on jo perusnäkymässä
 
-
-Mahdollisia jatko-ominaisuuksia:
+#### Mahdollisia jatko-ominaisuuksia:
 	Endpointin /audio/<id> kannattaisi cachetä saatu tulos, id:t ovat uniikkeja ja tiedostot isoja kannasta haettaviksi 
 		* Esim https://flask-caching.readthedocs.io/en/latest/ voisi auttaa tässä
 	Projektissa käyttäjä voi lisätä projektiin äänitiedostoja ja kirjoittaa tekstikenttään äänitiedostokutsuja:
