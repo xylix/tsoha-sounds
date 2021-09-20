@@ -7,12 +7,13 @@
 Toteutettavia ominaisuuksia:
 	#### pakollisia korjauksia:
 		[ ] queryjen korjauksia (vaikka haettaisiin montaa eri pöytää käytä yhtä queryä. Ohjeita teknisessä tarkastuslistassa kohdassa "Tietokanta-asiat")
-		[ ] lisää pylint ja black
 
 	[ ] Ylläpitäjä voi tehdä kaikkia käyttäjille sallittuja muokkauksia kaikkian käyttäjien projekteihin. Ylläpitäjä voi piilottaa ja poistaa julkaistuja projekteja.
 
 	[ ] Tarkista että projekti täyttää https://hy-tsoha.github.io/materiaali/tekninen_tarkastuslista/ vaatimukset
 		* Tarkista myös https://hy-tsoha.github.io/materiaali/arvostelu/
+
+	[ ] Heroku deployment
 
 
 
@@ -46,5 +47,8 @@ Mahdollisia jatko-ominaisuuksia:
 	[x] Käyttäjä voi selata julkaistuja projekteja
 	[x] Käyttäjä voi kommentoida / arvostella muiden projekteja
 	[x] Käyttäjä voi etsiä projekteja nimen alimerkkijonon perusteella
+
+	[x] Koodin laatu ja tyyli tarkistetaan Pylint- ja Black ohjelmilla
+
 
 
