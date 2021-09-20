@@ -148,6 +148,15 @@ def send_project():
         return render_template("error.html", error="Please select an unique name for your projct")
 
 
+@app.route("/query_project", methods=["GET"])
+def query_project():
+    query = request.args["query"]
+    sql = "SELECT id, name FROM project WHERE name LIKE :query AND published "
+    result = db.session.execute(sql, {"query":"%"+query+"%"})
+    projects = result.fetchall()
+    return render_template("search_results.html", projects=projects)
+
+
 @app.route("/project/<int:id>/send_comment", methods=["POST"])
 def send_comment(id: int):
     content = request.form["comment"]

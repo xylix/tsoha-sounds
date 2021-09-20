@@ -1,4 +1,4 @@
-
+<link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
 {% if session.username %}
 Omat projektisi:
 <hr>
@@ -7,10 +7,16 @@ Omat projektisi:
 <hr>
 {% endfor %}
 Muiden julkaistut projektit:
+<ul>
 {% for project in public_projects %}
-<a href="/project/{{project.id}}"> {{ project.name }} </a>
-<hr>
+<li><a href="/project/{{project.id}}"> {{ project.name }} </a></li>
+<br>
 {% endfor %}
+</ul>
+<hr>
+<form action="/query_project" method="GET">
+Hae projektia:<input type="text" name="query"><input type="submit" value="Lähetä">
+</form>
 <hr>
 <a href="/add_project">Luo projekti</a>
 

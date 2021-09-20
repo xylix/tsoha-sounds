@@ -6,7 +6,6 @@
 
 Ominaisuuksia:
 
-	[ ] Käyttäjä voi etsiä projekteja nimen alimerkkijonon perusteella
 	[ ] Ylläpitäjä voi tehdä kaikkia käyttäjille sallittuja muokkauksia kaikkian käyttäjien projekteihin. Ylläpitäjä voi piilottaa ja poistaa julkaistuja projekteja.
 	[ ] Lisää auth_required loppuihin endpointteihin joissa tarpeen
 	[ ] Tarkista että projekti täyttää https://hy-tsoha.github.io/materiaali/tekninen_tarkastuslista/ vaatimukset
@@ -18,6 +17,7 @@ Ominaisuuksia:
 
 Mahdollisesti pakollisia?:
 	[ ] Käyttäjä voi soittaa projektin äänitiedoston tai äänitiedostot peräkkäin
+		* https://stackoverflow.com/questions/64501684/how-can-i-play-playing-a-mp3-sound-with-flask
 	[ ] Käyttäjä voi muokata projektia
 	[ ] Käyttäjä voi tallentaa muokatun projektin
 
@@ -38,5 +38,6 @@ Mahdollisia jatko-ominaisuuksia:
 
 	[x] Käyttäjä voi selata julkaistuja projekteja
 	[x] Käyttäjä voi kommentoida / arvostella muiden projekteja
+	[x] Käyttäjä voi etsiä projekteja nimen alimerkkijonon perusteella
 
 
