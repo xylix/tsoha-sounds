@@ -13,15 +13,15 @@ from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash
 
 
-def initialize_models(db: SQLAlchemy):
-    file_project_association_table = db.Table(
+def initialize_models(database: SQLAlchemy):
+    file_project_association_table = database.Table(
         "fileproject",
-        db.metadata,
+        database.metadata,
         Column("file_id", ForeignKey("files.id"), primary_key=True),
         Column("project_id", ForeignKey("projects.id"), primary_key=True),
     )
 
-    class AppUser(db.Model):
+    class AppUser(database.Model):
         __tablename__ = "appusers"
         id = Column(Integer, primary_key=True)
         username = Column(String(80), unique=True, nullable=False)
@@ -29,22 +29,22 @@ def initialize_models(db: SQLAlchemy):
         password = Column(String(1024), unique=True, nullable=False)
         is_admin = Column(Boolean, default=False)
 
-    class Project(db.Model):
+    class Project(database.Model):
         __tablename__ = "projects"
         id = Column(Integer, primary_key=True)
         owner = Column(ForeignKey("appusers.id"))
         name = Column(String(80), unique=True)
         published = Column(Boolean, default=False)
-        files = db.relationship("File", secondary=file_project_association_table)
+        files = database.relationship("File", secondary=file_project_association_table)
 
-    class File(db.Model):
+    class File(database.Model):
         __tablename__ = "files"
         id = Column(Integer, primary_key=True)
         owner = Column(ForeignKey("appusers.id"))
         data = Column(LargeBinary)
         name = Column(String(80))
 
-    class Comment(db.Model):
+    class Comment(database.Model):
         __tablename__ = "comments"
         id = Column(Integer, primary_key=True)
         sender = Column(ForeignKey("appusers.id"))
@@ -54,7 +54,7 @@ def initialize_models(db: SQLAlchemy):
             DateTime(timezone=True), server_default=func.now(), nullable=False
         )
 
-    db.create_all()
+    database.create_all()
 
     if AppUser.query.filter_by(username="admin").first() is None:
         admin_user = AppUser(
@@ -63,25 +63,25 @@ def initialize_models(db: SQLAlchemy):
             password=generate_password_hash("root"),
             is_admin=True,
         )
-        db.session.add(admin_user)
-        db.session.commit()
+        database.session.add(admin_user)
+        database.session.commit()
         sample_project = Project(
             owner=admin_user.id, name="First public project", published=True
         )
         sample_file = File(owner=admin_user.id, name="Test file")
         sample_project.files.append(sample_file)
-        db.session.add(sample_project)
-        db.session.commit()
+        database.session.add(sample_project)
+        database.session.commit()
         sample_comment = Comment(
             sender=admin_user.id,
             containing_project=sample_project.id,
             content="First test comment",
         )
-        db.session.add(sample_comment)
-        db.session.commit()
+        database.session.add(sample_comment)
+        database.session.commit()
 
-    print(db.engine.table_names())
+    print(database.engine.table_names())
     models = AppUser, Project, File, Comment
-    print(CreateTable(file_project_association_table).compile(db.engine))
-    [print(CreateTable(item.__table__).compile(db.engine)) for item in models]
+    print(CreateTable(file_project_association_table).compile(database.engine))
+    [print(CreateTable(item.__table__).compile(database.engine)) for item in models]
     return models

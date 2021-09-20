@@ -1,5 +1,4 @@
 from flask import render_template, request, redirect, session
-from sqlalchemy.exc import IntegrityError
 
 
 from ..app import app, db

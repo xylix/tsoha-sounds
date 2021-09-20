@@ -18,7 +18,7 @@ db = SQLAlchemy(app)
 models.initialize_models(db)
 
 # This needs to be _after_ the `app` and db are defined to avoid circular import problems
-from .routes import file, project, user
+from .routes import file, project, user  # pylint: wrong-import-position,unused-import
 
 
 @app.route("/")
