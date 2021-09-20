@@ -23,6 +23,7 @@ Mahdollisesti pakollisia?:
 	[ ] Joku tapa poistaa jotain (projekteja, tiedostoja, kommentteja)
 Tiedettyjä bugeja:
 	[ ] Tiedostoja ei siivota kun ne on poistettu kaikista viittaavista projekteista
+	[ ] index.html sivulla näkyy "palaa takaisin" näkymä vaikka käyttäjä on jo perusnäkymässä
 
 
 Mahdollisia jatko-ominaisuuksia:

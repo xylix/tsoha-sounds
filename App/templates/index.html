@@ -21,8 +21,10 @@ Hae projektia:<input type="text" name="query"><input type="submit" value="Lähet
 </form>
 <hr>
 <a href="/add_project">Luo projekti</a>
+<hr>
 
 <p>Olet kirjautunut nimellä "{{ session.username }}"</p>
+<hr>
 <a href="/logout">Kirjaudu ulos</a>
 {% else %}
 <form action="/login" method="POST">
