@@ -8,7 +8,6 @@ from ..helpers import is_admin, auth_required, form_token_required
 @app.route("/project/<int:project_id>")
 @auth_required(db)
 def project(project_id: int):
-    # FIXME: combine the queries?
     projects_sql = "SELECT id, name, owner, published FROM Projects WHERE id=:id"
     result = db.session.execute(projects_sql, {"id": project_id})
     project_info = result.fetchone()
