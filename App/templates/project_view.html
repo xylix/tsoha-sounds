@@ -3,18 +3,19 @@
 
 <h3> Projekti {{ name }} </h3>
 
-{% if is_owner %}
+
+<a href="ei_toimi_vielä"/>Suorita projekti (soita äänitiedostot)</a>
+<hr>
 
 <br></br>
-<hr></hr>
+{% if is_owner %}
+
 Projektin nykyiset tiedostot:
-<br></br>
 <ul>
 {% for file in current_files %}
 	<li> {{file.name}} </li>
 {% endfor %}
 </ul>
-<br></br>
 
 <form action="/project/{{project_id}}/send_publish" method="POST">
 {% if published %}
@@ -40,16 +41,12 @@ Jätä palautetta:
 
 {% endif %}
 
-<a href="ei_toimi_vielä"/>Suorita projekti (soita äänitiedostot)</a>
-
-<br></br>
 
 Kommentit:
 
 <ul>
 {% for item in comments %}
 	<li> {{item.sender}}: {{item.content}} </li>
-	<br></br>
 {% endfor %}
 </ul>
 

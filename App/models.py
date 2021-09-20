@@ -5,12 +5,13 @@ from werkzeug.security import generate_password_hash
 
 
 def initialize_models(db: SQLAlchemy):
-    file_project_association_table = db.Table('file_project', db.metadata,
-        Column('file_id', ForeignKey('file.id'), primary_key=True),
-        Column('project_id', ForeignKey('project.id'), primary_key=True),
+    file_project_association_table = db.Table('FileProject', db.metadata,
+        Column('file_id', ForeignKey('Files.id'), primary_key=True),
+        Column('project_id', ForeignKey('Projects.id'), primary_key=True),
     )
 
     class AppUser(db.Model):
+        __tablename__ = "AppUsers"
         id = Column(Integer, primary_key=True)
         username = Column(String(80), unique=True, nullable=False)
         email = Column(String(120), unique=True, nullable=False)
@@ -21,22 +22,25 @@ def initialize_models(db: SQLAlchemy):
             return '<User %r>' % self.username
 
     class Project(db.Model):
+        __tablename__ = "Projects"
         id = Column(Integer, primary_key=True)
-        owner = Column(ForeignKey('app_user.id'))
+        owner = Column(ForeignKey('AppUsers.id'))
         name = Column(String(80), unique=True)
         published = Column(Boolean, default=False)
         files = db.relationship("File", secondary=file_project_association_table)
 
     class File(db.Model):
+        __tablename__ = "Files"
         id = Column(Integer, primary_key=True)
-        owner = Column(ForeignKey('app_user.id'))
+        owner = Column(ForeignKey('AppUsers.id'))
         data = Column(LargeBinary)
         name = Column(String(80))
 
     class Comment(db.Model):
+        __tablename__ = "Comments"
         id = Column(Integer, primary_key=True)
-        sender = Column(ForeignKey('app_user.id'))
-        containing_project = Column(ForeignKey('project.id'))
+        sender = Column(ForeignKey('AppUsers.id'))
+        containing_project = Column(ForeignKey('Projects.id'))
         content = Column(String(1024), nullable=False)
         sent = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
     

@@ -45,33 +45,38 @@ def auth_required(f):
 
 @app.route("/")
 def index():
+    # FIXME: combine the queries
     if is_admin():
-        result = db.session.execute("SELECT name,id FROM project WHERE NOT owner = :user_id", {"user_id": session["user_id"]})
+        result = db.session.execute("SELECT name,id FROM Projects WHERE NOT owner = :user_id", {"user_id": session["user_id"]})
     else:
-        result = db.session.execute("SELECT name,id FROM project WHERE NOT owner = :user_id AND published=True", {"user_id": session["user_id"]})
+        result = db.session.execute("SELECT name,id FROM Projects WHERE NOT owner = :user_id AND published=True", {"user_id": session["user_id"]})
     public_projects = result.fetchall()
-    own_projects = db.session.execute("SELECT name,id FROM project WHERE owner=:id", {"id": session["user_id"]}).fetchall()
+    own_projects = db.session.execute("SELECT name,id FROM Projects WHERE owner=:id", {"id": session["user_id"]}).fetchall()
     return render_template("index.html", own_projects=own_projects, public_projects=public_projects) 
 
 
 @app.route("/project/<int:id>")
 @auth_required
 def project(id: int):
-    sql = "SELECT id, name, owner, published FROM project WHERE id=:id"
+    # FIXME: combine the queries
+    sql = "SELECT id, name, owner, published FROM Projects WHERE id=:id"
     result = db.session.execute(sql, {"id": id})
     project_info = result.fetchone()
     
     comment_sql = """SELECT f.id, f.data, f.name
-        FROM file f
-        JOIN file_project fp ON f.id = fp.file_id
-        JOIN project p ON fp.project_id = p.id
+        FROM Files f
+        JOIN FileProject fp ON f.id = fp.file_id
+        JOIN Projects p ON fp.project_id = p.id
         WHERE p.id = :id
     """
 
     result = db.session.execute(comment_sql, {"id": id})
     files = result.fetchall()
 
-    sql = "SELECT sender, content FROM comment WHERE containing_project=:id"
+    sql = """SELECT AppUsers.username, Comments.sender, Comments.content
+        FROM Comments 
+        INNER JOIN AppUsers
+        WHERE containing_project=:id"""
     result = db.session.execute(sql, {"id": id})
     comments = result.fetchall()
     return render_template("project_view.html", name=project_info.name, project_id=project_info.id, current_files=files, published=project_info.published, comments=comments, is_owner=project_info.owner==session['user_id'])
@@ -82,7 +87,7 @@ def project(id: int):
 def send_publish(id: int):
     published = request.form.get("published") == "selected"
 
-    sql = "UPDATE project SET published=:published WHERE id=:id"
+    sql = "UPDATE Projects SET published=:published WHERE id=:id"
     result = db.session.execute(sql, {"id": id, "published": published})
     db.session.commit()
     print(f"Updated published status for project {id}, new value of publish: {published}")
@@ -92,12 +97,12 @@ def send_publish(id: int):
 @app.route("/add_file/<int:id>")
 @auth_required
 def add_file(id):
-    sql = "SELECT id, name FROM project WHERE owner=:user_id"
+    sql = "SELECT id, name FROM Projects WHERE owner=:user_id"
     user_id = session["user_id"]
     result = db.session.execute(sql, {"user_id":user_id})
     available_projects = result.fetchall()
     
-    available_files = db.session.execute("SELECT id,name FROM file").fetchall()
+    available_files = db.session.execute("SELECT id,name FROM Files").fetchall()
     return render_template("new_file.html", available_projects=available_projects, available_files=available_files)
 
 
@@ -114,18 +119,19 @@ def send_file():
         print("Uploading new file")
         assert new_file
 
-        sql = "INSERT INTO file(owner, data, name) VALUES (:owner, :data, :name) RETURNING id"
+        sql = "INSERT INTO Files(owner, data, name) VALUES (:owner, :data, :name) RETURNING id"
         result = db.session.execute(sql, {"owner":session["user_id"], "data":new_file.stream.read(), "name":new_file.filename})
 
-        sql = "INSERT INTO file_project(file_id, project_id) VALUES (:file_id, :project_id)"
+        sql = "INSERT INTO FileProject(file_id, project_id) VALUES (:file_id, :project_id)"
         result = db.session.execute(sql, {"file_id": result.first().id, "project_id": project})
         db.session.commit()
         return redirect(f"/project/{project}")
 
     if old_file:
         print("Appending existing file")
-        file = File.query.filter_by(id=old_file).first()
-        project_obj.files.append(file)
+
+        sql = "INSERT INTO FileProject(file_id, project_id) VALUES (:file_id, :project_id)"
+        result = db.session.execute(sql, {"file_id": old_file, "project_id": project})
         db.session.commit()
         return redirect(f"/project/{project}")
     return abort(500)
@@ -143,7 +149,7 @@ def add_project():
 def send_project():
     name = request.form["name"]
     try:
-        sql = "INSERT INTO project(name, owner) VALUES (:name, :owner)"
+        sql = "INSERT INTO Projects (name, owner) VALUES (:name, :owner)"
         result = db.session.execute(sql, {"name":name, "owner": session["user_id"]})
         db.session.commit()
         print(f"Succesfully created project {name}")
@@ -158,7 +164,7 @@ def send_project():
 @auth_required
 def query_project():
     query = request.args["query"]
-    sql = "SELECT id, name FROM project WHERE name LIKE :query AND published "
+    sql = "SELECT id, name FROM Projects WHERE name LIKE :query AND published "
     result = db.session.execute(sql, {"query":"%"+query+"%"})
     projects = result.fetchall()
     return render_template("search_results.html", projects=projects)
@@ -168,8 +174,8 @@ def query_project():
 @auth_required
 def send_comment(id: int):
     content = request.form["comment"]
-    sample_comment = Comment(sender=session["user_id"], containing_project=id, content=content)
-    db.session.add(sample_comment)
+    sql = "INSERT INTO Comments(sender, containing_project, content) VALUES (:sender,:containing_project,:content)"
+    result = db.session.execute(sql, {"sender":session["user_id"], "containing_project":id, "content":content })
     db.session.commit()
     return redirect(f"/project/{id}")
 
@@ -180,7 +186,7 @@ def login():
     password = request.form["password"]
     print(f"Querying for user with username: {username}")
     # Check username and password
-    sql = "SELECT id, password, is_admin FROM app_user WHERE username=:username"
+    sql = "SELECT id, password, is_admin FROM AppUsers WHERE username=:username"
     result = db.session.execute(sql, {"username":username})
     user = result.fetchone()
     if not user:
@@ -218,7 +224,7 @@ def send_register():
     email = request.form["email"]
     password = generate_password_hash(request.form["password"])
     try:
-        sql = "INSERT INTO app_user(username, password,email) VALUES (:username, :password, :email)"
+        sql = "INSERT INTO AppUsers(username, password,email) VALUES (:username, :password, :email)"
         result = db.session.execute(sql, {"username":username, "password": password, "email": email})
         db.session.commit()
         return redirect("/")
