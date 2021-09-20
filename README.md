@@ -12,6 +12,7 @@ Ominaisuuksia:
 
 	#### pakollisia korjauksia:
 		[ ] SQLALchemy modelit ja queryt normaaliksi SQL
+		[ ] queryjen korjauksia (vaikka haettaisiin montaa eri pöytää käytä yhtä queryä. Ohjeita teknisessä tarkastuslistassa kohdassa "Tietokanta-asiat")
 		[ ] Näytä kommentoijan id:n sijaan nimi
 
 
