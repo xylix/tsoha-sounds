@@ -15,14 +15,14 @@ from werkzeug.security import generate_password_hash
 
 def initialize_models(db: SQLAlchemy):
     file_project_association_table = db.Table(
-        "FileProject",
+        "fileproject",
         db.metadata,
-        Column("file_id", ForeignKey("Files.id"), primary_key=True),
-        Column("project_id", ForeignKey("Projects.id"), primary_key=True),
+        Column("file_id", ForeignKey("files.id"), primary_key=True),
+        Column("project_id", ForeignKey("projects.id"), primary_key=True),
     )
 
     class AppUser(db.Model):
-        __tablename__ = "AppUsers"
+        __tablename__ = "appusers"
         id = Column(Integer, primary_key=True)
         username = Column(String(80), unique=True, nullable=False)
         email = Column(String(120), nullable=False)
@@ -30,25 +30,25 @@ def initialize_models(db: SQLAlchemy):
         is_admin = Column(Boolean, default=False)
 
     class Project(db.Model):
-        __tablename__ = "Projects"
+        __tablename__ = "projects"
         id = Column(Integer, primary_key=True)
-        owner = Column(ForeignKey("AppUsers.id"))
+        owner = Column(ForeignKey("appusers.id"))
         name = Column(String(80), unique=True)
         published = Column(Boolean, default=False)
         files = db.relationship("File", secondary=file_project_association_table)
 
     class File(db.Model):
-        __tablename__ = "Files"
+        __tablename__ = "files"
         id = Column(Integer, primary_key=True)
-        owner = Column(ForeignKey("AppUsers.id"))
+        owner = Column(ForeignKey("appusers.id"))
         data = Column(LargeBinary)
         name = Column(String(80))
 
     class Comment(db.Model):
-        __tablename__ = "Comments"
+        __tablename__ = "comments"
         id = Column(Integer, primary_key=True)
-        sender = Column(ForeignKey("AppUsers.id"))
-        containing_project = Column(ForeignKey("Projects.id"))
+        sender = Column(ForeignKey("appusers.id"))
+        containing_project = Column(ForeignKey("projects.id"))
         content = Column(String(1024), nullable=False)
         sent = Column(
             DateTime(timezone=True), server_default=func.now(), nullable=False
@@ -82,6 +82,6 @@ def initialize_models(db: SQLAlchemy):
 
     print(db.engine.table_names())
     models = AppUser, Project, File, Comment
-    print(CreateTable(file_project_association_table))
-    [print(CreateTable(item.__table__)) for item in models]
+    print(CreateTable(file_project_association_table).compile(db.engine))
+    [print(CreateTable(item.__table__).compile(db.engine)) for item in models]
     return models
