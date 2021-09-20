@@ -68,18 +68,20 @@ def add_project():
 @form_token_required
 def send_project():
     name = request.form["name"]
-    try:
-        sql = "INSERT INTO Projects (name, owner) VALUES (:name, :owner)"
-        db.session.execute(sql, {"name": name, "owner": session["user_id"]})
-        db.session.commit()
-        print(f"Succesfully created project {name}")
-        return redirect("/")
-    except IntegrityError as error:
-        print(error)
-        # FIXME: this could be any integrity error
+    already_exists = db.session.execute(
+        "SELECT id FROM Projects WHERE name=:name", {"name": name}
+    ).first()
+
+    if already_exists:
         return render_template(
             "error.html", error="Please select an unique name for your projct"
         )
+
+    sql = "INSERT INTO Projects (name, owner) VALUES (:name, :owner)"
+    db.session.execute(sql, {"name": name, "owner": session["user_id"]})
+    db.session.commit()
+    print(f"Succesfully created project {name}")
+    return redirect("/")
 
 
 @app.route("/query_project", methods=["GET"])

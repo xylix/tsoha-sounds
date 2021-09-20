@@ -13,6 +13,7 @@ Toteutettavia ominaisuuksia:
 		* Tarkista myös https://hy-tsoha.github.io/materiaali/arvostelu/
 
 		[ ] validoi user inputit ennen sql inserttejä
+	[ ] poista models.py, mutta populoi tietokantaan jotain "valmista dataa"
 	[ ] Heroku deployment
 
 
@@ -24,7 +25,6 @@ Mahdollisesti pakollisia?:
 	[ ] Käyttäjä voi tallentaa muokatun projektin
 	[ ] Joku tapa poistaa jotain (projekteja, tiedostoja, kommentteja)
 Tiedettyjä bugeja:
-	[ ] Add filesillä voi yrittää lisätä projektissa jo olemassaolevan tiedoston uudestaan
 
 
 Mahdollisia jatko-ominaisuuksia:
@@ -51,4 +51,7 @@ Mahdollisia jatko-ominaisuuksia:
 	[x] Koodin laatu ja tyyli tarkistetaan Pylint- ja Black ohjelmilla
 
 
+
+#### Korjattuja bugeja:
+	[x] Add filesillä voi yrittää lisätä projektissa jo olemassaolevan tiedoston uudestaan
 
