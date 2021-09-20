@@ -24,6 +24,7 @@ Projektin nykyiset tiedostot:
 <input type="checkbox" name="published" value="selected">Julkaistu<br>
 {% endif %}
 <input type="submit" value="Päivitä">
+<input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
 </form>
 
 <br></br>
@@ -37,6 +38,7 @@ Jätä palautetta:
 <form action="/project/{{project_id}}/send_comment" method="POST">
 <input type="text" name="comment">
 <input type="submit" value="Lähetä">
+<input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
 </form>
 
 {% endif %}

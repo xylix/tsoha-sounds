@@ -1,6 +1,7 @@
 from functools import wraps
 from os import getenv
 from typing import Optional
+import secrets
 
 from flask import Flask
 from flask import redirect, render_template, request, session
@@ -37,7 +38,6 @@ def logged_in_user() -> bool:
 
 
 def is_admin():
-    # FIXME: if the session["is_admin"] can be a string like "0" add `is True` comparison
     return session.get("is_admin")
 
 
@@ -56,11 +56,22 @@ def auth_required(func):
     return decorated_function
 
 
+def form_token_required(func):
+    @wraps(func)
+    def decorated_function(*args, **kws):
+        if session.get("csrf_token") != request.form["csrf_token"]:
+            return abort(403)
+        else:
+            return func(*args, **kws)
+
+    return decorated_function
+
+
 @app.route("/")
 def index():
     if not logged_in_user():
         return render_template("index.html")
-    # FIXME: combine the queries
+
     if is_admin():
         result = db.session.execute(
             "SELECT name,id FROM Projects WHERE NOT owner = :user_id",
@@ -80,7 +91,7 @@ def index():
     )
 
 
-@app.route("/project/<int:id>")
+@app.route("/project/<int:project_id>")
 @auth_required
 def project(project_id: int):
     # FIXME: combine the queries?
@@ -116,8 +127,9 @@ def project(project_id: int):
     )
 
 
-@app.route("/project/<int:id>/send_publish", methods=["POST"])
+@app.route("/project/<int:project_id>/send_publish", methods=["POST"])
 @auth_required
+@form_token_required
 def send_publish(project_id: int):
     published = request.form.get("published") == "selected"
 
@@ -148,6 +160,7 @@ def add_file():
 
 @app.route("/send_file", methods=["POST"])
 @auth_required
+@form_token_required
 def send_file():
     new_file: Optional[FileStorage] = request.files.get("new_file")
     old_file = request.form.get("old_file")
@@ -190,13 +203,13 @@ def send_file():
 
 @app.route("/add_project")
 @auth_required
-@auth_required
 def add_project():
     return render_template("new_project.html")
 
 
 @app.route("/send_project", methods=["POST"])
 @auth_required
+@form_token_required
 def send_project():
     name = request.form["name"]
     try:
@@ -223,8 +236,9 @@ def query_project():
     return render_template("search_results.html", projects=projects)
 
 
-@app.route("/project/<int:id>/send_comment", methods=["POST"])
+@app.route("/project/<int:project_id>/send_comment", methods=["POST"])
 @auth_required
+@form_token_required
 def send_comment(project_id: int):
     content = request.form["comment"]
     sql = "INSERT INTO Comments(sender, containing_project, content) VALUES (:sender,:containing_project,:content)"
@@ -262,6 +276,7 @@ def login():
     session["username"] = username
     session["user_id"] = user.id
     session["is_admin"] = user["is_admin"] is True
+    session["csrf_token"] = secrets.token_hex(16)
     return redirect("/")
 
 
@@ -269,6 +284,8 @@ def login():
 def logout():
     del session["username"]
     del session["user_id"]
+    del session["is_admin"]
+    del session["csrf_token"]
     return redirect("/")
 
 
