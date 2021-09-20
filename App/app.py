@@ -14,6 +14,7 @@ from . import models
 
 app = Flask(__name__)
 
+# Heroku provides an old postgres format which doesn't work with new SQLAlchemy
 REWRITTEN_DATABASE_URL = getenv("DATABASE_URL").replace('postgres://', 'postgresql://')
 app.config["SQLALCHEMY_DATABASE_URI"] = REWRITTEN_DATABASE_URL
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
@@ -22,8 +23,17 @@ db = SQLAlchemy(app)
 models = models.initialize_models(db)
 
 
-def is_logged_in_user():
-    return session.get("username") is not None
+def logged_in_user():
+    if not session.get("user_id"):
+        # There is no active session
+        return False
+    
+    sql = "SELECT id FROM AppUsers WHERE id=:id"
+    if not db.session.execute(sql, {"id":session.get("user_id")}).first():
+        # Session has expired or comes from older database instance, delete it
+        logout()
+        return False
+    return True
 
 def is_admin():
     return session.get("is_admin") == True
@@ -35,7 +45,7 @@ def auth_required(f):
         allow = False
         if is_admin():
             allow = True
-        elif is_logged_in_user():
+        elif logged_in_user():
             allow = True
         if not allow:
             return render_template("error.html", error="Ei oikeutta nähdä sivua")
@@ -45,6 +55,8 @@ def auth_required(f):
 
 @app.route("/")
 def index():
+    if not logged_in_user():
+        return render_template("index.html")
     # FIXME: combine the queries
     if is_admin():
         result = db.session.execute("SELECT name,id FROM Projects WHERE NOT owner = :user_id", {"user_id": session["user_id"]})
@@ -63,21 +75,21 @@ def project(id: int):
     result = db.session.execute(sql, {"id": id})
     project_info = result.fetchone()
     
-    comment_sql = """SELECT f.id, f.data, f.name
+    files_sql = """SELECT f.id, f.data, f.name
         FROM Files f
         JOIN FileProject fp ON f.id = fp.file_id
         JOIN Projects p ON fp.project_id = p.id
         WHERE p.id = :id
     """
-
-    result = db.session.execute(comment_sql, {"id": id})
+    result = db.session.execute(files_sql, {"id": id})
     files = result.fetchall()
 
-    sql = """SELECT AppUsers.username, Comments.sender, Comments.content
+    comments_sql = """SELECT AppUsers.username, Comments.sender, Comments.content
         FROM Comments 
         INNER JOIN AppUsers
+        ON AppUsers.id = Comments.sender
         WHERE containing_project=:id"""
-    result = db.session.execute(sql, {"id": id})
+    result = db.session.execute(comments_sql, {"id": id})
     comments = result.fetchall()
     return render_template("project_view.html", name=project_info.name, project_id=project_info.id, current_files=files, published=project_info.published, comments=comments, is_owner=project_info.owner==session['user_id'])
 
@@ -188,7 +200,7 @@ def login():
     # Check username and password
     sql = "SELECT id, password, is_admin FROM AppUsers WHERE username=:username"
     result = db.session.execute(sql, {"username":username})
-    user = result.fetchone()
+    user = result.first()
     if not user:
         print(f"User not found, result of query: {user}")
         return render_template("invalid_credentials.html")
@@ -207,18 +219,16 @@ def login():
 
 
 @app.route("/logout")
-@auth_required
 def logout():
     del session["username"]
+    del session["user_id"]
     return redirect("/")
 
 @app.route("/register")
-@auth_required
 def register():
     return render_template("register.html")
 
 @app.route("/send_register", methods=["POST"])
-@auth_required
 def send_register():
     username = request.form["username"]
     email = request.form["email"]

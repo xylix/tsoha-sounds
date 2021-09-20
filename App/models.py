@@ -14,7 +14,7 @@ def initialize_models(db: SQLAlchemy):
         __tablename__ = "AppUsers"
         id = Column(Integer, primary_key=True)
         username = Column(String(80), unique=True, nullable=False)
-        email = Column(String(120), unique=True, nullable=False)
+        email = Column(String(120), nullable=False)
         password = Column(String(1024), unique=True, nullable=False)
         is_admin = Column(Boolean, default=False)
 

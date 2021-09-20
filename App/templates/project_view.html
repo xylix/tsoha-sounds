@@ -42,11 +42,12 @@ Jätä palautetta:
 {% endif %}
 
 
+<br></br>
 Kommentit:
 
 <ul>
 {% for item in comments %}
-	<li> {{item.sender}}: {{item.content}} </li>
+	<li> {{item.username}}: {{item.content}} </li>
 {% endfor %}
 </ul>
 

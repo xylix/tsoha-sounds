@@ -7,10 +7,9 @@
 Ominaisuuksia:
 
 	#### pakollisia korjauksia:
-		[ ] SQLALchemy modelit ja queryt normaaliksi SQL
 		[ ] queryjen korjauksia (vaikka haettaisiin montaa eri pöytää käytä yhtä queryä. Ohjeita teknisessä tarkastuslistassa kohdassa "Tietokanta-asiat")
-		[ ] Näytä kommentoijan id:n sijaan nimi
-		lisää pylint ja black
+		[x] Näytä kommentoijan id:n sijaan nimi
+		[ ] lisää pylint ja black
 
 	[ ] Ylläpitäjä voi tehdä kaikkia käyttäjille sallittuja muokkauksia kaikkian käyttäjien projekteihin. Ylläpitäjä voi piilottaa ja poistaa julkaistuja projekteja.
 	[ ] Lisää auth_required loppuihin endpointteihin joissa tarpeen
@@ -36,6 +35,7 @@ Mahdollisia jatko-ominaisuuksia:
 		* Tekstikentässä `basso_a basso_g basso_g basso_a` soittaa neljä ääntä
 
 #### Toteutettuja ominaisuuksia:
+	[x] SQLALchemy modelit ja queryt normaaliksi SQL
 	[x] Käyttäjä voi kirjautua sisään ja ulos sekä luoda uuden tunnuksen.
 	
 	[x] Käyttäjä voi luoda omia projekteja
