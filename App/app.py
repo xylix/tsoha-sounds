@@ -5,7 +5,8 @@ from flask import render_template, session
 from flask_sqlalchemy import SQLAlchemy
 
 from . import models
-from .helpers import logged_in_user, is_admin
+from .helpers import is_admin, logged_in_user
+from .routes import file, project, user
 
 app = Flask(__name__)
 
@@ -40,9 +41,6 @@ def index():
     return render_template(
         "index.html", own_projects=own_projects, public_projects=public_projects
     )
-
-
-from .routes import project, file, user
 
 
 if __name__ == "__main__":

@@ -1,3 +1,5 @@
+from . import routes
+
 from .app import app
 
 application = app

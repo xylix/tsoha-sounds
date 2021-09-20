@@ -6,7 +6,6 @@
 
 Toteutettavia ominaisuuksia:
 	#### pakollisia korjauksia:
-		[ ] queryjen korjauksia (vaikka haettaisiin montaa eri pöytää käytä yhtä queryä. Ohjeita teknisessä tarkastuslistassa kohdassa "Tietokanta-asiat")
 
 	[ ] Ylläpitäjä voi tehdä kaikkia käyttäjille sallittuja muokkauksia kaikkian käyttäjien projekteihin. Ylläpitäjä voi piilottaa ja poistaa julkaistuja projekteja.
 
