@@ -29,9 +29,6 @@ def initialize_models(db: SQLAlchemy):
         password = Column(String(1024), unique=True, nullable=False)
         is_admin = Column(Boolean, default=False)
 
-        def __repr__(self):
-            return "<User %r>" % self.username
-
     class Project(db.Model):
         __tablename__ = "Projects"
         id = Column(Integer, primary_key=True)
