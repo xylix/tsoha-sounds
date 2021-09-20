@@ -13,6 +13,8 @@ Toteutettavia ominaisuuksia:
 		* Tarkista myös https://hy-tsoha.github.io/materiaali/arvostelu/
 
 		[ ] validoi user inputit ennen sql inserttejä
+		[ ] README:hen käyttöohje
+		[ ] Ulkoasun tulee olla _viimeistelty_
 	[ ] poista models.py, mutta populoi tietokantaan jotain "valmista dataa"
 	[ ] Heroku deployment
 
