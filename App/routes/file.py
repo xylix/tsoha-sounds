@@ -56,7 +56,14 @@ def send_file():
         db.session.commit()
         return redirect(f"/project/{project_id}")
     elif old_file:
-        # FIXME: could we validate here not to send file from same project to same project?
+        existence_sql = "SELECT file_id, project_id FROM FileProject WHERE file_id=:file_id AND project_id=:project_id"
+        file_already_exists = db.session.execute(
+            existence_sql, {"file_id": old_file, "project_id": project_id}
+        ).first()
+
+        if file_already_exists:
+            return render_template("error.html", error="File already exists in project")
+
         print("Appending existing file")
 
         fp_insert_sql = "INSERT INTO FileProject(file_id, project_id) VALUES (:file_id, :project_id)"
