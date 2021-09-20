@@ -70,7 +70,7 @@ def index():
 @app.route("/project/<int:id>")
 @auth_required
 def project(id: int):
-    # FIXME: combine the queries
+    # FIXME: combine the queries?
     sql = "SELECT id, name, owner, published FROM Projects WHERE id=:id"
     result = db.session.execute(sql, {"id": id})
     project_info = result.fetchone()
@@ -132,10 +132,10 @@ def send_file():
         assert new_file
 
         sql = "INSERT INTO Files(owner, data, name) VALUES (:owner, :data, :name) RETURNING id"
-        result = db.session.execute(sql, {"owner":session["user_id"], "data":new_file.stream.read(), "name":new_file.filename})
+        files_result = db.session.execute(sql, {"owner":session["user_id"], "data":new_file.stream.read(), "name":new_file.filename})
 
         sql = "INSERT INTO FileProject(file_id, project_id) VALUES (:file_id, :project_id)"
-        result = db.session.execute(sql, {"file_id": result.first().id, "project_id": project})
+        result = db.session.execute(sql, {"file_id": files_result.first().id, "project_id": project})
         db.session.commit()
         return redirect(f"/project/{project}")
 

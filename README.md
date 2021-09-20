@@ -4,15 +4,12 @@
 
 Äänien-talletus selainpalvelu
 
-Ominaisuuksia:
-
+Toteutettavia ominaisuuksia:
 	#### pakollisia korjauksia:
 		[ ] queryjen korjauksia (vaikka haettaisiin montaa eri pöytää käytä yhtä queryä. Ohjeita teknisessä tarkastuslistassa kohdassa "Tietokanta-asiat")
-		[x] Näytä kommentoijan id:n sijaan nimi
 		[ ] lisää pylint ja black
 
 	[ ] Ylläpitäjä voi tehdä kaikkia käyttäjille sallittuja muokkauksia kaikkian käyttäjien projekteihin. Ylläpitäjä voi piilottaa ja poistaa julkaistuja projekteja.
-	[ ] Lisää auth_required loppuihin endpointteihin joissa tarpeen
 
 	[ ] Tarkista että projekti täyttää https://hy-tsoha.github.io/materiaali/tekninen_tarkastuslista/ vaatimukset
 		* Tarkista myös https://hy-tsoha.github.io/materiaali/arvostelu/
@@ -35,6 +32,8 @@ Mahdollisia jatko-ominaisuuksia:
 		* Tekstikentässä `basso_a basso_g basso_g basso_a` soittaa neljä ääntä
 
 #### Toteutettuja ominaisuuksia:
+	[x] Lisää auth_required loppuihin endpointteihin joissa tarpeen
+	[x] Näytä kommentoijan id:n sijaan nimi
 	[x] SQLALchemy modelit ja queryt normaaliksi SQL
 	[x] Käyttäjä voi kirjautua sisään ja ulos sekä luoda uuden tunnuksen.
 	
