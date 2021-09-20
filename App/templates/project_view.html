@@ -26,6 +26,10 @@ Projektin nykyiset tiedostot:
 {% endfor %}
 </ul>
 
+<a href="/add_file">Lisää tiedosto</a>
+<br>
+
+{% if allowed_to_modify %}
 <form action="/project/{{project_id}}/send_publish" method="POST">
 {% if published %}
 <input type="checkbox" name="published" value="selected" checked={{published}}>Julkaistu
@@ -35,10 +39,8 @@ Projektin nykyiset tiedostot:
 <input type="submit" value="Muuta">
 <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
 </form>
-
-<br></br>
-
-<a href="/add_file">Lisää tiedosto</a>
+{% endif %}
+<br>
 
 
 Jätä palautetta:
@@ -49,9 +51,7 @@ Jätä palautetta:
 <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
 </form>
 
-
-
-<br></br>
+<br>
 Kommentit:
 
 <ul>
