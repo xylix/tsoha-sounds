@@ -17,17 +17,15 @@ Toteutettavia ominaisuuksia:
 	[ ] Heroku deployment
 
 
-
 Mahdollisesti pakollisia?:
-	[ ] Käyttäjä voi soittaa projektin äänitiedoston tai äänitiedostot peräkkäin
-		* https://stackoverflow.com/questions/64501684/how-can-i-play-playing-a-mp3-sound-with-flask
-	[ ] Käyttäjä voi muokata projektia
-	[ ] Käyttäjä voi tallentaa muokatun projektin
 	[ ] Joku tapa poistaa jotain (projekteja, tiedostoja, kommentteja)
 Tiedettyjä bugeja:
+	[ ] Tiedostoja ei siivota kun ne on poistettu kaikista viittaavista projekteista
 
 
 Mahdollisia jatko-ominaisuuksia:
+	Endpointin /audio/<id> kannattaisi cachetä saatu tulos, id:t ovat uniikkeja ja tiedostot isoja kannasta haettaviksi 
+		* Esim https://flask-caching.readthedocs.io/en/latest/ voisi auttaa tässä
 	Projektissa käyttäjä voi lisätä projektiin äänitiedostoja ja kirjoittaa tekstikenttään äänitiedostokutsuja:
 		* Äänitiedostot basso_a.mp3 ja basso_g.mp3
 		* Tekstikentässä `basso_a basso_g basso_g basso_a` soittaa neljä ääntä
@@ -40,6 +38,7 @@ Mahdollisia jatko-ominaisuuksia:
 	
 	[x] Käyttäjä voi luoda omia projekteja
 	[x] Käyttäjä voi lisätä projektiin tiedostoja
+	[x] Käyttäjä voi poistaa projektista tiedostoja
 	[x] Käyttäjä voi lisätä omien projektiensa tiedostoja helposti muihin projekteihin
 	
 	[x] Käyttäjä voi julkaista omia projekteja. Käyttäjä voi perua julkaisun / piilottaa jo julkaistun projektin.
@@ -50,8 +49,13 @@ Mahdollisia jatko-ominaisuuksia:
 
 	[x] Koodin laatu ja tyyli tarkistetaan Pylint- ja Black ohjelmilla
 
-
+	[x] Käyttäjä voi soittaa projektin äänitiedostoja tai äänitiedostot peräkkäin
+		* https://stackoverflow.com/questions/64501684/how-can-i-play-playing-a-mp3-sound-with-flask
 
 #### Korjattuja bugeja:
 	[x] Add filesillä voi yrittää lisätä projektissa jo olemassaolevan tiedoston uudestaan
 
+
+### Lisensseistä:
+
+Esimerkkinä ja sample datana käytettävä äänitiedosto haettu täältä: https://www.free-stock-music.com/fsm-team-escp-neonscapes.html

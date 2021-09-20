@@ -1,35 +1,38 @@
 {% extends "layout.html" %}
 {% block body %}
 
-<h3> Projekti {{ name }} </h3>
+<h3> {{ name }} </h3>
 
-
-<a href="ei_toimi_vielä"/>Suorita projekti (soita äänitiedostot)</a>
 <hr>
-
-<br></br>
-{% if allowed_to_modify %}
 
 Projektin nykyiset tiedostot:
 <ul>
 {% for file in current_files %}
-	<li> {{file.name}} 
+<li> {{file.name}} 
 	<figure>
-    <audio controls src="/audio/{{file.id}}">
-        Your browser does not support the <code>audio</code> element.
-    </audio>
-</figure>
+		<audio controls src="/audio/{{file.id}}">
+			Your browser does not support the <code>audio</code> element.
+		</audio>
+	</figure>
+
+{% if allowed_to_modify %}
+<form action="/project/{{project_id}}/delete_file" method="POST">
+<input type="submit" value="Poista">
+<input type="hidden" name="file_id" value="{{ file.id }}">
+<input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+</form>
+{% endif %}
 </li>
 {% endfor %}
 </ul>
 
 <form action="/project/{{project_id}}/send_publish" method="POST">
 {% if published %}
-<input type="checkbox" name="published" value="selected" checked={{published}}>Julkaistu<br>
+<input type="checkbox" name="published" value="selected" checked={{published}}>Julkaistu
 {% else %}
-<input type="checkbox" name="published" value="selected">Julkaistu<br>
+<input type="checkbox" name="published" value="selected">Julkaistu
 {% endif %}
-<input type="submit" value="Päivitä">
+<input type="submit" value="Muuta">
 <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
 </form>
 
@@ -37,7 +40,6 @@ Projektin nykyiset tiedostot:
 
 <a href="/add_file">Lisää tiedosto</a>
 
-{% else %}
 
 Jätä palautetta:
 
@@ -47,7 +49,6 @@ Jätä palautetta:
 <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
 </form>
 
-{% endif %}
 
 
 <br></br>

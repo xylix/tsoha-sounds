@@ -10,3 +10,18 @@ body {
 h1,h2,h3 {
 	line-height:1.2
 }
+
+ul {
+  background: #6f9bc7;
+  padding: 20px;
+}
+
+ul li {
+  background: #cce5ff;
+  margin: 5px;
+}
+
+figure {
+    margin: 0;
+}
+

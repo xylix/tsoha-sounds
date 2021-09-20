@@ -108,3 +108,14 @@ def send_comment(project_id: int):
     )
     db.session.commit()
     return redirect(f"/project/{project_id}")
+
+
+@app.route("/project/<int:project_id>/delete_file", methods=["POST"])
+@auth_required(db)
+@form_token_required
+def delete_file(project_id: int):
+    file_id = request.form["file_id"]
+    sql = "DELETE FROM FileProject WHERE file_id=:file_id AND project_id=:project_id"
+    db.session.execute(sql, {"file_id": file_id, "project_id": project_id})
+    db.session.commit()
+    return redirect(f"/project/{project_id}")
