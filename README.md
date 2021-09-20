@@ -6,14 +6,18 @@
 
 Ominaisuuksia:
 
-	[ ] Ylläpitäjä voi tehdä kaikkia käyttäjille sallittuja muokkauksia kaikkian käyttäjien projekteihin. Ylläpitäjä voi piilottaa ja poistaa julkaistuja projekteja.
-	[ ] Lisää auth_required loppuihin endpointteihin joissa tarpeen
-	[ ] Tarkista että projekti täyttää https://hy-tsoha.github.io/materiaali/tekninen_tarkastuslista/ vaatimukset
-
 	#### pakollisia korjauksia:
 		[ ] SQLALchemy modelit ja queryt normaaliksi SQL
 		[ ] queryjen korjauksia (vaikka haettaisiin montaa eri pöytää käytä yhtä queryä. Ohjeita teknisessä tarkastuslistassa kohdassa "Tietokanta-asiat")
 		[ ] Näytä kommentoijan id:n sijaan nimi
+		lisää pylint ja black
+
+	[ ] Ylläpitäjä voi tehdä kaikkia käyttäjille sallittuja muokkauksia kaikkian käyttäjien projekteihin. Ylläpitäjä voi piilottaa ja poistaa julkaistuja projekteja.
+	[ ] Lisää auth_required loppuihin endpointteihin joissa tarpeen
+
+	[ ] Tarkista että projekti täyttää https://hy-tsoha.github.io/materiaali/tekninen_tarkastuslista/ vaatimukset
+		* Tarkista myös https://hy-tsoha.github.io/materiaali/arvostelu/
+
 
 
 Mahdollisesti pakollisia?:
@@ -22,6 +26,8 @@ Mahdollisesti pakollisia?:
 	[ ] Käyttäjä voi muokata projektia
 	[ ] Käyttäjä voi tallentaa muokatun projektin
 	[ ] Joku tapa poistaa jotain (projekteja, tiedostoja, kommentteja)
+Tiedettyjä bugeja:
+	[ ] Add filesillä voi yrittää lisätä projektissa jo olemassaolevan tiedoston uudestaan
 
 
 Mahdollisia jatko-ominaisuuksia:

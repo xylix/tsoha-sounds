@@ -9,10 +9,11 @@
 <hr></hr>
 Projektin nykyiset tiedostot:
 <br></br>
+<ul>
 {% for file in current_files %}
-	* tiedosto {{file.name}}
-	<br></br>
+	<li> {{file.name}} </li>
 {% endfor %}
+</ul>
 <br></br>
 
 <form action="/project/{{project_id}}/send_publish" method="POST">
@@ -52,5 +53,4 @@ Kommentit:
 {% endfor %}
 </ul>
 
-<a href="/">Palaa takaisin</a>
 {% endblock %}

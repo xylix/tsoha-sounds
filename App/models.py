@@ -5,9 +5,9 @@ from werkzeug.security import generate_password_hash
 
 
 def initialize_models(db: SQLAlchemy):
-    file_project_association_table = db.Table('association', db.metadata,
+    file_project_association_table = db.Table('file_project', db.metadata,
+        Column('file_id', ForeignKey('file.id'), primary_key=True),
         Column('project_id', ForeignKey('project.id'), primary_key=True),
-        Column('file_id', ForeignKey('file.id'), primary_key=True)
     )
 
     class AppUser(db.Model):
@@ -26,10 +26,6 @@ def initialize_models(db: SQLAlchemy):
         name = Column(String(80), unique=True)
         published = Column(Boolean, default=False)
         files = db.relationship("File", secondary=file_project_association_table)
-
-
-        def __repr__(self):
-            return '<Project %r>' % self.username
 
     class File(db.Model):
         id = Column(Integer, primary_key=True)

@@ -20,14 +20,13 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.secret_key = getenv("SECRET_KEY")
 db = SQLAlchemy(app)
 models = models.initialize_models(db)
-AppUser, Project, File, Comment = models
 
 
 def is_logged_in_user():
-    return session["username"] is not None
+    return session.get("username") is not None
 
 def is_admin():
-    return session["is_admin"] == True
+    return session.get("is_admin") == True
 
 
 def auth_required(f):
@@ -47,9 +46,9 @@ def auth_required(f):
 @app.route("/")
 def index():
     if is_admin():
-        result = db.session.execute("SELECT name,id FROM project")
+        result = db.session.execute("SELECT name,id FROM project WHERE NOT owner = :user_id", {"user_id": session["user_id"]})
     else:
-        result = db.session.execute("SELECT name,id FROM project WHERE published=True" )
+        result = db.session.execute("SELECT name,id FROM project WHERE NOT owner = :user_id AND published=True", {"user_id": session["user_id"]})
     public_projects = result.fetchall()
     own_projects = db.session.execute("SELECT name,id FROM project WHERE owner=:id", {"id": session["user_id"]}).fetchall()
     return render_template("index.html", own_projects=own_projects, public_projects=public_projects) 
@@ -62,14 +61,16 @@ def project(id: int):
     result = db.session.execute(sql, {"id": id})
     project_info = result.fetchone()
     
-    project_obj = Project.query.filter_by(id=id).first()
-    files = File.query.with_parent(project_obj).all()
+    comment_sql = """SELECT f.id, f.data, f.name
+        FROM file f
+        JOIN file_project fp ON f.id = fp.file_id
+        JOIN project p ON fp.project_id = p.id
+        WHERE p.id = :id
+    """
 
+    result = db.session.execute(comment_sql, {"id": id})
+    files = result.fetchall()
 
-    # sql = "SELECT id, data FROM file WHERE containing_project=:id"
-    # result = db.session.execute(sql, {"id": id})
-    #files = result.fetchall()
-    
     sql = "SELECT sender, content FROM comment WHERE containing_project=:id"
     result = db.session.execute(sql, {"id": id})
     comments = result.fetchall()
@@ -77,6 +78,7 @@ def project(id: int):
 
 
 @app.route("/project/<int:id>/send_publish", methods=["POST"])
+@auth_required
 def send_publish(id: int):
     published = request.form.get("published") == "selected"
 
@@ -86,54 +88,58 @@ def send_publish(id: int):
     print(f"Updated published status for project {id}, new value of publish: {published}")
     return redirect(f"/project/{id}")
 
-# Does this benefit from ID since it offers change to add file to any project?
+# TODO: Does this benefit from ID since it offers change to add file to any project?
 @app.route("/add_file/<int:id>")
 @auth_required
-def add_file(id: int):
+def add_file(id):
     sql = "SELECT id, name FROM project WHERE owner=:user_id"
     user_id = session["user_id"]
     result = db.session.execute(sql, {"user_id":user_id})
     available_projects = result.fetchall()
-    # FIXME: how to do query.without_parent behaviour? (filter away already parented files of the proejct)
-    available_files = File.query.filter_by(owner=user_id).all()
-    # available_files = db.session.execute("SELECT id,name FROM file WHERE (owner = :user_id AND NOT containing_project = :project_id)", {"project_id": id, "user_id":user_id}).fetchall()
+    
+    available_files = db.session.execute("SELECT id,name FROM file").fetchall()
     return render_template("new_file.html", available_projects=available_projects, available_files=available_files)
 
 
 @app.route("/send_file", methods=["POST"])
+@auth_required
 def send_file():
+    # FIXME: could we validate here not to send file from same project to same project?
     new_file: Optional[FileStorage] = request.files.get("new_file")
     old_file = request.form.get("old_file")
     project = request.form["project"]
-    project_obj = Project.query.filter_by(id=project).first()
 
     print(request.files)
     if new_file:
         print("Uploading new file")
         assert new_file
-        file = File(owner=session["user_id"], data=new_file.stream.read(), name=new_file.filename)
-        project_obj.files.append(file)
-        db.session.add(project_obj)
+
+        sql = "INSERT INTO file(owner, data, name) VALUES (:owner, :data, :name) RETURNING id"
+        result = db.session.execute(sql, {"owner":session["user_id"], "data":new_file.stream.read(), "name":new_file.filename})
+
+        sql = "INSERT INTO file_project(file_id, project_id) VALUES (:file_id, :project_id)"
+        result = db.session.execute(sql, {"file_id": result.first().id, "project_id": project})
         db.session.commit()
-        return redirect(f"/project/{project_obj.id}")
+        return redirect(f"/project/{project}")
 
     if old_file:
         print("Appending existing file")
         file = File.query.filter_by(id=old_file).first()
         project_obj.files.append(file)
-        db.session.add(project_obj)
         db.session.commit()
-        return redirect(f"/project/{project_obj.id}")
+        return redirect(f"/project/{project}")
     return abort(500)
 
 
 @app.route("/add_project")
+@auth_required
 @auth_required
 def add_project():
     return render_template("new_project.html")
 
 
 @app.route("/send_project", methods=["POST"])
+@auth_required
 def send_project():
     name = request.form["name"]
     try:
@@ -149,6 +155,7 @@ def send_project():
 
 
 @app.route("/query_project", methods=["GET"])
+@auth_required
 def query_project():
     query = request.args["query"]
     sql = "SELECT id, name FROM project WHERE name LIKE :query AND published "
@@ -158,6 +165,7 @@ def query_project():
 
 
 @app.route("/project/<int:id>/send_comment", methods=["POST"])
+@auth_required
 def send_comment(id: int):
     content = request.form["comment"]
     sample_comment = Comment(sender=session["user_id"], containing_project=id, content=content)
@@ -193,15 +201,18 @@ def login():
 
 
 @app.route("/logout")
+@auth_required
 def logout():
     del session["username"]
     return redirect("/")
 
 @app.route("/register")
+@auth_required
 def register():
     return render_template("register.html")
 
 @app.route("/send_register", methods=["POST"])
+@auth_required
 def send_register():
     username = request.form["username"]
     email = request.form["email"]
