@@ -8,20 +8,23 @@
 Projektin nykyiset tiedostot:
 <ul>
 {% for file in current_files %}
-<li> {{file.name}} 
-	<figure>
-		<audio controls src="/audio/{{file.id}}">
-			Your browser does not support the <code>audio</code> element.
-		</audio>
-	</figure>
+<li> 
+	<div class="flex">
+		{{file.name}} 
+		<figure>
+			<audio controls src="/audio/{{file.id}}">
+				Your browser does not support the <code>audio</code> element.
+			</audio>
+		</figure>
 
-{% if allowed_to_modify %}
-<form action="/project/{{project_id}}/delete_file" method="POST">
-<input type="submit" value="Poista">
-<input type="hidden" name="file_id" value="{{ file.id }}">
-<input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-</form>
-{% endif %}
+		{% if allowed_to_modify %}
+		<form action="/project/{{project_id}}/delete_file" method="POST">
+		<input type="submit" value="Poista">
+		<input type="hidden" name="file_id" value="{{ file.id }}">
+		<input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+		</form>
+		{% endif %}
+	</div>
 </li>
 {% endfor %}
 </ul>
