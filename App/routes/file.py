@@ -6,14 +6,17 @@ from werkzeug.exceptions import abort
 from werkzeug.datastructures import FileStorage
 
 
-from ..helpers import auth_required, form_token_required
+from ..helpers import auth_required, form_token_required, is_admin
 from ..app import app, db
 
 
 @app.route("/add_file")
 @auth_required(db)
 def add_file():
-    sql = "SELECT id, name FROM Projects WHERE owner=:user_id"
+    if is_admin():
+        sql = "SELECT id, name FROM Projects"
+    else:
+        sql = "SELECT id, name FROM Projects WHERE owner=:user_id"
     user_id = session["user_id"]
     result = db.session.execute(sql, {"user_id": user_id})
     available_projects = result.fetchall()
