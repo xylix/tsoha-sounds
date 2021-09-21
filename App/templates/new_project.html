@@ -2,9 +2,9 @@
 {% block body %}
 
 <form action="/send_project" method="POST">
-<p>Nimi:<br>
-<input type="text" name="name"></p>
-<input type="submit" value="Luo">
-<input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+	<p>Nimi:<br>
+	<input type="text" name="name"></p>
+	<input type="submit" value="Luo">
+	<input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
 </form>
 {% endblock %}

@@ -1,12 +1,12 @@
 <!doctype html>
 <head>
-		<title>Soundb</title>
-		<link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
-		<link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+	<title>Soundb</title>
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+	<link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
 </head>
 
 <div class=page>
-	  {% block body %}{% endblock %}
-		<br>
-		<a href="/">Palaa takaisin</a>
+	{% block body %}{% endblock %}
+	<br>
+	<a href="/">Palaa takaisin</a>
 </div>
