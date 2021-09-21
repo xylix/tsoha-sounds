@@ -118,3 +118,15 @@ def delete_file(project_id: int, file_id: int):
     db.session.execute(sql, {"file_id": file_id, "project_id": project_id})
     db.session.commit()
     return redirect(f"/project/{project_id}")
+
+
+@app.route("/project/<int:project_id>/delete", methods=["POST"])
+@auth_required(db)
+@form_token_required
+def delete_project(project_id: int):
+    fp_sql = "DELETE FROM FileProject WHERE project_id=:project_id"
+    db.session.execute(fp_sql, {"project_id": project_id})
+    project_sql = "DELETE FROM Projects WHERE id=:project_id"
+    db.session.execute(project_sql, {"project_id": project_id})
+    db.session.commit()
+    return redirect("/")

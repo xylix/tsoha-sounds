@@ -8,7 +8,7 @@ Omat projektisi:
 <li>
 <div class="flex">
 	<a href="/project/{{project.id}}">{{ project.name }}</a>
-	<form action="/project/{{project_id}}/delete" method="POST">
+	<form action="/project/{{project.id}}/delete" method="POST">
 	<input type="submit" value="Poista">
 	<input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
 	</form>
@@ -22,7 +22,7 @@ Muiden julkaistut projektit:
 {% for project in public_projects %}
 <li><a href="/project/{{project.id}}"> {{ project.name }} </a>
 	{% if session.is_admin %}
-	<form action="/project/{{project_id}}/delete" method="POST">
+	<form action="/project/{{project.id}}/delete" method="POST">
 	<input type="submit" value="Poista">
 	<input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
 	</form>
