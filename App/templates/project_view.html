@@ -18,9 +18,8 @@ Projektin nykyiset tiedostot:
 		</figure>
 
 		{% if allowed_to_modify %}
-		<form action="/project/{{project_id}}/delete_file" method="POST">
+		<form action="/project/{{project_id}}/delete_file/{{file.id}}" method="POST">
 		<input type="submit" value="Poista">
-		<input type="hidden" name="file_id" value="{{ file.id }}">
 		<input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
 		</form>
 		{% endif %}
