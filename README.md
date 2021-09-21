@@ -22,7 +22,7 @@ Projekteissa joihin käyttäjällä on muokkausoikeudet (omat projektit ja admin
 Projekti on organisoitu python moduuleihin. Sovelluskoodi löytyy projektin juuren sisältä kansiosta App/. 
 
 Projektin rakenne:
-/ 
+* / 
 	* README.md
 	* schema.sql
 		* Projektin sql-skeeman luontiskripti
