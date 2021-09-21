@@ -4,7 +4,6 @@ from flask import Flask
 from flask import render_template, session
 from flask_sqlalchemy import SQLAlchemy
 
-from . import models
 from .helpers import is_admin, logged_in_user
 
 app = Flask(__name__)
@@ -15,7 +14,6 @@ app.config["SQLALCHEMY_DATABASE_URI"] = REWRITTEN_DATABASE_URL
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.secret_key = getenv("SECRET_KEY")
 db = SQLAlchemy(app)
-models.initialize_models(db)
 
 # fmt: off
 # This needs to be _after_ the `app` and db are defined to avoid circular import problems

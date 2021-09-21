@@ -14,7 +14,7 @@ from ..app import app, db
 @auth_required(db)
 def add_file():
     if is_admin():
-        sql = "SELECT id, name FROM Projects"
+        sql = "SELECT id, name FROM Projects owner=:user_id"
     else:
         sql = "SELECT id, name FROM Projects WHERE owner=:user_id"
     user_id = session["user_id"]
