@@ -51,20 +51,7 @@ Projektin rakenne:
 #### Tiedettyjä bugeja:
 	[ ] Tiedostoja ei siivota kun ne on poistettu kaikista viittaavista projekteista
 	[ ] index.html sivulla näkyy "palaa takaisin" näkymä vaikka käyttäjä on jo perusnäkymässä
-
-
-#### Toteutettavia ominaisuuksia:
-	#### pakollisia korjauksia:
-
-	[ ] Tarkista että projekti täyttää https://hy-tsoha.github.io/materiaali/tekninen_tarkastuslista/ vaatimukset
-		* Tarkista myös https://hy-tsoha.github.io/materiaali/arvostelu/
-
-		[ ] validoi user inputit ennen sql inserttejä
-		[ ] README:hen käyttöohje
-		[x] Ulkoasun tulee olla _viimeistelty_
-	# ennen viimeistä deploymenttiä
-	[ ] poista models.py, mutta populoi tietokantaan jotain "valmista dataa"
-	[ ] Heroku deployment
+	[ ] Käyttäjäsyötteiden pituuksia ei validoida ennen sql-inserttejä
 
 
 #### Mahdollisia jatko-ominaisuuksia:
