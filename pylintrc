@@ -1,6 +1,6 @@
 [MESSAGES CONTROL]
 
-disable=bad-continuation,bad-whitespace,line-too-long,,missing-module-docstring,no-member,missing-function-docstring,no-else-return
+disable=bad-continuation,bad-whitespace,line-too-long,missing-module-docstring,missing-function-docstring,no-else-return
 
 [format]
 

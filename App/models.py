@@ -59,34 +59,6 @@ def initialize_models(database: SQLAlchemy):
 
     database.create_all()
 
-    if AppUser.query.filter_by(username="admin").first() is None:
-        # If the env var is not set, set a random generated PW for the admin account
-        admin_pw = getenv("ADMIN_PASSWORD") or secrets.token_hex(16)
-        admin_user = AppUser(
-            username="admin",
-            email="admin@/dev/null",
-            password=generate_password_hash(admin_pw),
-            is_admin=True,
-        )
-        database.session.add(admin_user)
-        database.session.commit()
-        sample_project = Project(
-            owner=admin_user.id, name="First public project", published=True
-        )
-        sample_file = File(
-            owner=admin_user.id, name="Broken test file", data=b"1010101010"
-        )
-        sample_project.files.append(sample_file)
-        database.session.add(sample_project)
-        database.session.commit()
-        sample_comment = Comment(
-            sender=admin_user.id,
-            containing_project=sample_project.id,
-            content="First test comment",
-        )
-        database.session.add(sample_comment)
-        database.session.commit()
-
     print(database.engine.table_names())
     models = AppUser, Project, File, Comment
     print(CreateTable(file_project_association_table).compile(database.engine))

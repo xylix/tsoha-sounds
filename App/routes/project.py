@@ -97,7 +97,7 @@ def query_project():
 @form_token_required
 def send_comment(project_id: int):
     content = request.form["comment"]
-    sql = "INSERT INTO Comments(sender, containing_project, content) VALUES (:sender,:containing_project,:content)"
+    sql = "INSERT INTO Comments(sender, containing_project, content) VALUES(:sender,:containing_project,:content)"
     db.session.execute(
         sql,
         {
