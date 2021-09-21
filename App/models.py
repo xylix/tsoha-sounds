@@ -1,3 +1,6 @@
+from os import getenv
+import secrets
+
 from sqlalchemy import (
     Column,
     Integer,
@@ -57,10 +60,12 @@ def initialize_models(database: SQLAlchemy):
     database.create_all()
 
     if AppUser.query.filter_by(username="admin").first() is None:
+        # If the env var is not set, set a random generated PW for the admin account
+        admin_pw = getenv("ADMIN_PASSWORD") or secrets.token_hex(16)
         admin_user = AppUser(
             username="admin",
             email="admin@/dev/null",
-            password=generate_password_hash("root"),
+            password=generate_password_hash(admin_pw),
             is_admin=True,
         )
         database.session.add(admin_user)
