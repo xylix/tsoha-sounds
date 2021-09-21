@@ -124,6 +124,8 @@ def delete_file(project_id: int, file_id: int):
 @auth_required(db)
 @form_token_required
 def delete_project(project_id: int):
+    comment_sql = "DELETE FROM Comments WHERE containing_project=:project_id"
+    db.session.execute(comment_sql, {"project_id": project_id})
     fp_sql = "DELETE FROM FileProject WHERE project_id=:project_id"
     db.session.execute(fp_sql, {"project_id": project_id})
     project_sql = "DELETE FROM Projects WHERE id=:project_id"
